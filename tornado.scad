@@ -1,85 +1,97 @@
-// === PARAMETERS ===
+// === Parameters ===
 turns = 12;
-height = 200;
-min_radius = 5;
-max_radius = 50;
-strip_thickness = 1.2;
-strip_width = 2.5;
 segments_per_turn = 60;
-hook_radius = 6;
-hook_thickness = 1.5;
-bridge_height = 8;
+total_segments = turns * segments_per_turn;
 
-// === FUNNEL SPIRAL (wide → narrow) ===
-module funnel_spiral() {
-  step_angle = 360 / segments_per_turn;
-  total_steps = turns * segments_per_turn;
-  z_step = height / total_steps;
+end_radius = 100;
+height = 0;
 
-  for (i = [0 : total_steps - 2]) {
-    angle1 = i * step_angle;
-    angle2 = (i + 1) * step_angle;
+min_width = 3;
+max_width = 8;
 
-    r1 = max_radius - (max_radius - min_radius) * (i / total_steps);
-    r2 = max_radius - (max_radius - min_radius) * ((i + 1) / total_steps);
+min_thickness = 3;
+max_thickness = 8;
 
-    x1 = r1 * cos(angle1);
-    y1 = r1 * sin(angle1);
-    z1 = height - i * z_step;
+strip_thickness_y = 1;
 
-    x2 = r2 * cos(angle2);
-    y2 = r2 * sin(angle2);
-    z2 = height - (i + 1) * z_step;
+center_disc_radius = 6;
+center_disc_thickness = min_thickness; // match outer strip height
+center_hole_radius = 2.5; // 5mm hole
 
+start_radius = center_hole_radius + 1; // e.g. 3.5mm
+
+// === Assembly ===
+spiral_strip_variable_size();
+center_attachment_disc();
+bridge_to_top_disc_aligned();
+top_attachment_disc();
+
+// === Spiral Function ===
+module spiral_strip_variable_size() {
+  for (i = [0 : total_segments - 2]) {
     hull() {
-      translate([x1, y1, z1])
-        cube([strip_width, strip_thickness, strip_thickness], center=true);
-      translate([x2, y2, z2])
-        cube([strip_width, strip_thickness, strip_thickness], center=true);
+      place_strip(i);
+      place_strip(i + 1);
     }
   }
 }
 
-// === RETURN BRIDGE TO CENTER ===
-module return_bridge_to_center() {
-  steps = 30;
-  for (i = [0 : steps - 2]) {
-    t1 = i / steps;
-    t2 = (i + 1) / steps;
+// === Strip Placement ===
+module place_strip(i) {
+  t = i / total_segments;
+  angle = 360 * i / segments_per_turn;
+  radius = start_radius + (end_radius - start_radius) * t;
+  z = height * t;
 
-    r1 = max_radius * (1 - t1);
-    r2 = max_radius * (1 - t2);
+  width = min_width + (max_width - min_width) * t;
+  thickness = min_thickness + (max_thickness - min_thickness) * t;
 
-    angle1 = 360 * t1;
-    angle2 = 360 * t2;
+  translate([radius * cos(angle), radius * sin(angle), 0])
+    rotate([0, 0, angle])
+      cube([width, strip_thickness_y, thickness]);
+}
 
-    x1 = r1 * cos(angle1);
-    y1 = r1 * sin(angle1);
-    z1 = height + bridge_height * sin(t1 * 180);
+// === Central Disc + Hole ===
+module center_attachment_disc() {
+  difference() {
+    // Disc
+    translate([0, 0, 0])
+      cylinder(h=center_disc_thickness, r=center_disc_radius, $fn=100);
 
-    x2 = r2 * cos(angle2);
-    y2 = r2 * sin(angle2);
-    z2 = height + bridge_height * sin(t2 * 180);
-
-    hull() {
-      translate([x1, y1, z1])
-        cube([strip_width, strip_thickness, strip_thickness], center=true);
-      translate([x2, y2, z2])
-        cube([strip_width, strip_thickness, strip_thickness], center=true);
-    }
+    // Hole
+    translate([0, 0, -1])
+      cylinder(h=center_disc_thickness + 2, r=center_hole_radius, $fn=50);
   }
 }
 
-// === CENTER HOOK ===
-module hook() {
-  translate([0, 0, height + bridge_height + 3])
-    rotate([90, 0, 0])
-      rotate_extrude(angle=300)
-        translate([hook_radius, 0])
-          square([hook_thickness, hook_thickness]);
+// === Bridge from spiral end to center (elevated) ===
+module bridge_to_top_disc_aligned() {
+  t = 1;
+  angle = 360 * (total_segments - 1.35) / segments_per_turn;
+  radius = start_radius + (end_radius - start_radius) * t;
+
+  end_x = radius * cos(angle);
+  end_y = radius * sin(angle);
+
+  z = max_thickness / 2;
+
+  // ✅ Add buffer to fully intersect spiral edge
+  len = sqrt(end_x * end_x + end_y * end_y) + max_width - min_width;
+
+  mid_x = end_x / 2;
+  mid_y = end_y / 2;
+
+  translate([mid_x + max_width - min_width, mid_y, z + max_thickness])
+    rotate([0, 0, angle])
+      cube([len, max_width, max_thickness], center=true);
 }
 
-// === ASSEMBLY ===
-funnel_spiral();
-return_bridge_to_center();
-// hook();
+// === New disc at the top (for hanging)
+module top_attachment_disc() {
+  translate([0, 0, max_thickness])
+    difference() {
+      cylinder(h = max_thickness, r = center_disc_radius, $fn=100);
+      translate([0, 0, -1])
+        cylinder(h = max_thickness + 2, r = center_hole_radius, $fn=50);
+    }
+}
