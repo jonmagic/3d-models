@@ -2,6 +2,7 @@
 turns = 8;
 segments_per_turn = 60;
 total_segments = turns * segments_per_turn;
+max_i = total_segments - 2;
 
 end_radius = 100;
 height = 0;
@@ -9,8 +10,8 @@ height = 0;
 min_width = 1;
 max_width = 4;
 
-min_thickness = 3;
-max_thickness = 8;
+min_thickness = 0.1;
+max_thickness = 10;
 
 strip_thickness_y = 2;
 
@@ -28,13 +29,17 @@ top_attachment_disc();
 
 // === Spiral Function ===
 module spiral_strip_variable_size() {
-  for (i = [0 : total_segments - 2]) {
+  for (i = [0 : max_i]) {
     hull() {
       place_strip(i);
       place_strip(i + 1);
     }
   }
 }
+
+// === Thickness Calculation Function ===
+function calculate_thickness(turns, i, max_i, max_thickness, min_thickness) =
+    (i <= max_i / turns) ? max_thickness : min_thickness + (max_thickness - min_thickness) * pow(1 - pow((i - max_i / turns) / (max_i - max_i / turns), 0.3), 0.3);
 
 // === Strip Placement ===
 module place_strip(i) {
@@ -47,7 +52,7 @@ module place_strip(i) {
   z = 0; // flat, printable
 
   // ✅ Decrease thickness toward center
-  thickness = min_thickness + (max_thickness - min_thickness) * (1 - t);
+  thickness = calculate_thickness(turns, i, max_i, max_thickness, min_thickness);
 
   // ✅ Increase width toward center
   width = min_width + (max_width - min_width) * t;
