@@ -1,0 +1,13 @@
+build/
+*.stl
+*.3mf
+*.gcode
+*.bgcode
+.DS_Store
+build/
+p_*/
+d_*/
+a_*/
+
+# Personal data: real recipients and measurements stay out of the repo.
+recipients.local.sh
