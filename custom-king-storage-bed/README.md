@@ -25,9 +25,13 @@ The mattress, deck, and pedestal foot edges align. The outer supports are splaye
 
 The headboard is one full-width sloped cabinet. A centered lower recess allows the 76-inch mattress and Power-Flex deck to tuck 4 inches behind the visible side profile without intersecting the cabinet.
 
-An 18-inch-wide pod is stored laterally inside each end of the headboard. Each pod has a five-sided outer cap, a 26-inch-high shelf, a rear wall, and an inner retaining wall. In the open configuration each pod slides 16 inches beyond its side of the bed while 2 inches remain captured in the headboard, making the exposed shelf function like a compact nightstand for a CPAP and charging stand.
+Each end of the headboard stores a 24.75-inch-deep lateral pod sized for a 24-inch drawer slide plus the 3/4-inch outer end cap. Each pod has a five-sided outer cap, a bottom shelf 14.5 inches above the floor, a rear wall, a shallow front apron, and an inner retaining wall. In the open configuration each pod slides 16 inches beyond its side of the bed while 8.75 inches remain inside the headboard, making the drawer bottom function like a compact nightstand shelf for a CPAP and charging stand.
 
-The light triangular infill remains fixed to the cabinet and does not move with the pod. The pod width, extension, shelf height, walls, and slide mechanism are provisional pending front-view dimensions, equipment envelopes, and hardware selection.
+Two vertically oriented slide envelopes run behind the rear wall and front apron of each pod. The envelopes are 24 inches long, 2 inches tall, and 3/8 inch thick based on the approximate hardware dimensions; they reserve clearance and show the mounting concept but are not exact hardware models. A localized rear mounting strip and the continuous front cabinet rail provide the fixed mounting surfaces. A 22-inch slide can use the same arrangement with shorter mounting blocks. The same slide family is intended for the eight base drawers, but their boxes and hardware are not modeled yet.
+
+The wall-facing back of the headboard is mostly open so the bed can be pulled forward for access to adjustable-base power, CPAP, and charging cables. Narrow side stiles plus top and bottom rails preserve the cabinet frame. Localized horizontal strips remain behind the rear slide of each pod; the rest of the back is open rather than covered by a full panel.
+
+The light triangular infill remains fixed to the cabinet and does not move with the pod. The pod depth, extension, shelf height, walls, and slide mechanism are provisional pending equipment envelopes and final hardware selection.
 
 ## Build
 
@@ -47,6 +51,8 @@ build/frame.stl
 build/fixed-fronts.stl
 build/pods-closed.stl
 build/pods-open.stl
+build/slide-envelopes-closed.stl
+build/slide-envelopes-open.stl
 build/deck.stl
 build/mattress.stl
 build/supports.stl

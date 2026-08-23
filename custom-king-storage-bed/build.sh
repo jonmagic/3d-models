@@ -12,6 +12,7 @@ PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
   "$PROJECT_DIR/build/frame.stl:brown" \
   "$PROJECT_DIR/build/fixed-fronts.stl:burlywood" \
   "$PROJECT_DIR/build/pods-closed.stl:tan" \
+  "$PROJECT_DIR/build/slide-envelopes-closed.stl:silver" \
   "$PROJECT_DIR/build/deck.stl:slategray" \
   "$PROJECT_DIR/build/mattress.stl:white" \
   "$PROJECT_DIR/build/supports.stl:saddlebrown" \
@@ -21,6 +22,7 @@ PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
   "$PROJECT_DIR/build/frame.stl:brown" \
   "$PROJECT_DIR/build/fixed-fronts.stl:burlywood" \
   "$PROJECT_DIR/build/pods-open.stl:tan" \
+  "$PROJECT_DIR/build/slide-envelopes-open.stl:silver" \
   "$PROJECT_DIR/build/deck.stl:slategray" \
   "$PROJECT_DIR/build/mattress.stl:white" \
   "$PROJECT_DIR/build/supports.stl:saddlebrown" \
