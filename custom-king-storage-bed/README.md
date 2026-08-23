@@ -4,6 +4,8 @@ A conceptual build123d model for the California king storage bed around a Person
 
 `bed.py` is the parametric source of truth. It exports an exact STEP assembly plus separate STL groups for colored review renders. Generated files live under `build/` and are ignored.
 
+`modules.py` is the structural-chassis study. It replaces the pedestal envelope with six transportable carcass modules, five removable laminated crossmembers, three midpoint splice plates, and the nine-support layout. Shared dimensions live in `design.py`.
+
 ## Working side-elevation geometry
 
 | Dimension | Value |
@@ -78,6 +80,18 @@ The light triangular infill remains fixed to the cabinet and does not move with 
 
 Use 3/4-inch furniture-grade plywood as the default carcass, headboard-skin, shelf, partition, and drawer-front thickness unless a structural calculation or hardware interface requires something different. Birch veneer is the current finish candidate. The exact plywood core, veneer grade, exposed-edge treatment, hardwood trim, joinery, and finish are not selected yet. The present pedestal remains an exterior-envelope abstraction; it must be converted into actual 3/4-inch panel carcasses and structural members before producing a cut list.
 
+## Modular structural chassis
+
+The working chassis is divided into six 48-inch-long modules arranged three across and two long. The four side modules are 28 inches wide and provide two drawer bays each. The two 20-inch-wide center modules carry the split-base seam and preserve service space. Head and foot modules meet at the 48-inch midpoint above the middle support row.
+
+Each side module currently includes a 3/4-inch bottom, an inner longitudinal wall, a shallow outer top rail, and three lower transverse bulkheads at the end, drawer-divider, and midpoint interfaces. Eight explicit drawer-box envelopes preserve two openings per side module; each currently reserves 24 inches of depth, at least 20.75 inches of width, and approximately 5.25 inches of internal height before drawer-box and slide clearances. The center modules include bottom panels, outer walls, a doubled center beam, and service-opening bulkheads. The head-center bottom and beam preserve the existing 12-inch outlet and cable route.
+
+Five removable 1.5 × 4.5-inch laminated plywood crossmembers drop into notches at the head, drawer divisions, midpoint, and foot. They bridge left, center, and right modules while resting directly over the transverse bulkheads. The head crossmember is split around the 12-inch service opening. Three provisional 1/4-inch-thick by 2-inch-tall steel splice plates bridge the midpoint below the center crossmember on the left, center, and right longitudinal load paths. Alignment dowels, through-bolt sizes, plate holes, and captured-nut details are not modeled yet.
+
+The structural screening uses a 2,000-pound distributed chassis load and a separate 500-pound concentrated edge load. The current deterministic bending check covers only a laminated crossmember spanning the 12-inch center service opening, using conservative working plywood properties. This is a local, non-governing check: no longitudinal span, drawer-division reaction, or load transfer from the five crossmember stations to the three leg rows has been calculated yet. It does not establish a bed rating. Plywood grade and orientation, glue-lamination quality, bulkhead buckling, fastener capacity, splice plates, racking, feet, floor bearing, and proof loading remain unresolved.
+
+The Power-Flex support interface also remains provisional. The five crossmember stations are a furniture load path, not confirmation that the adjustable bases may bridge those spaces. Additional bearing rails or slats and field-located bolt plates must follow the delivered bases' stationary chassis, factory mounting points, and permitted support pattern.
+
 ## Build
 
 ```sh
@@ -101,6 +115,9 @@ build/slide-envelopes-open.stl
 build/deck.stl
 build/mattress.stl
 build/supports.stl
+build/modules/structural-modules.step
+build/modules/{head-modules,foot-modules,crossmembers,splice-plates,drawer-envelopes,supports}.stl
+build/modules/{exact,colored-structure,colored-drawers}/*.png
 build/exact-{closed,open}/*.png
 build/colored-{closed,open}/*.png
 ```

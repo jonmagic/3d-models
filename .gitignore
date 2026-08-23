@@ -4,6 +4,8 @@ build/
 *.gcode
 *.bgcode
 .DS_Store
+__pycache__/
+*.pyc
 build/
 p_*/
 d_*/
