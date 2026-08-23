@@ -97,6 +97,31 @@ rear_opening = box(
     FRAME_Y_MIN + 1.5,
     PEDESTAL_TOP + 0.75,
 )
+central_service_cavity = box(
+    MATTRESS_X - 1.5,
+    FRAME_WIDTH - 2 * POD_BODY_WIDTH,
+    HEADBOARD_HEIGHT - PEDESTAL_TOP - 2.7,
+    1.5,
+    FRAME_Y_MIN + POD_BODY_WIDTH,
+    PEDESTAL_TOP + 1.5,
+)
+pod_slide_x_positions = (2.0, 6.5)
+slide_pockets = []
+for y_min in (
+    FRAME_Y_MIN + POD_END_CAP_THICKNESS,
+    -FRAME_Y_MIN - POD_BODY_WIDTH,
+):
+    for x_min in pod_slide_x_positions:
+        slide_pockets.append(
+            box(
+                POD_SLIDE_HEIGHT,
+                POD_SLIDE_LENGTH,
+                POD_SLIDE_THICKNESS,
+                x_min,
+                y_min,
+                POD_FLOOR_Z - POD_SLIDE_THICKNESS,
+            )
+        )
 headboard_structure = (
     headboard_envelope
     - center_recess
@@ -104,25 +129,9 @@ headboard_structure = (
     - right_pod_cavity
     - compound(fixed_infills)
     - rear_opening
+    - central_service_cavity
+    - compound(slide_pockets)
 )
-rear_slide_mounts = [
-    box(
-        0.75,
-        POD_SLIDE_LENGTH,
-        POD_SLIDE_HEIGHT + 1,
-        0.75,
-        FRAME_Y_MIN + POD_END_CAP_THICKNESS,
-        POD_FLOOR_Z + POD_SHELF_THICKNESS - 0.5,
-    ),
-    box(
-        0.75,
-        POD_SLIDE_LENGTH,
-        POD_SLIDE_HEIGHT + 1,
-        0.75,
-        -FRAME_Y_MIN - POD_BODY_WIDTH,
-        POD_FLOOR_Z + POD_SHELF_THICKNESS - 0.5,
-    ),
-]
 
 
 def make_pod(side: str):
@@ -137,10 +146,9 @@ def make_pod(side: str):
         cap_y = y_max - POD_END_CAP_THICKNESS
         inner_wall_y = y_min
 
-    rear_wall_x = 1.5 + POD_SLIDE_THICKNESS
-    front_wall_x = 9 - POD_SLIDE_THICKNESS - POD_WALL_THICKNESS
+    rear_wall_x = 1.5
     shelf_x = rear_wall_x
-    shelf_depth = 9 - POD_SLIDE_THICKNESS - shelf_x
+    shelf_depth = 9 - shelf_x
 
     end_cap = profile(pod_profile, cap_y, cap_y + POD_END_CAP_THICKNESS)
     shelf = box(
@@ -159,14 +167,6 @@ def make_pod(side: str):
         y_min,
         POD_FLOOR_Z,
     )
-    front_apron = box(
-        POD_WALL_THICKNESS,
-        POD_BODY_WIDTH,
-        POD_WALL_TOP - POD_FLOOR_Z,
-        front_wall_x,
-        y_min,
-        POD_FLOOR_Z,
-    )
     inner_wall = box(
         shelf_depth,
         POD_WALL_THICKNESS,
@@ -175,7 +175,7 @@ def make_pod(side: str):
         inner_wall_y,
         POD_FLOOR_Z,
     )
-    return end_cap + shelf + back_wall + front_apron + inner_wall
+    return end_cap + shelf + back_wall + inner_wall
 
 
 def make_slide_segments(side: str, extension: float):
@@ -187,40 +187,30 @@ def make_slide_segments(side: str, extension: float):
         moving_y = fixed_y + extension
 
     channel_thickness = POD_SLIDE_THICKNESS / 2
-    slide_z = POD_FLOOR_Z + POD_SHELF_THICKNESS
-    fixed_rear = box(
-        channel_thickness,
-        POD_SLIDE_LENGTH,
-        POD_SLIDE_HEIGHT,
-        1.5,
-        fixed_y,
-        slide_z,
-    )
-    moving_rear = box(
-        channel_thickness,
-        POD_SLIDE_LENGTH,
-        POD_SLIDE_HEIGHT,
-        1.5 + channel_thickness,
-        moving_y,
-        slide_z,
-    )
-    moving_front = box(
-        channel_thickness,
-        POD_SLIDE_LENGTH,
-        POD_SLIDE_HEIGHT,
-        9 - POD_SLIDE_THICKNESS,
-        moving_y,
-        slide_z,
-    )
-    fixed_front = box(
-        channel_thickness,
-        POD_SLIDE_LENGTH,
-        POD_SLIDE_HEIGHT,
-        9 - channel_thickness,
-        fixed_y,
-        slide_z,
-    )
-    return [fixed_rear, fixed_front], [moving_rear, moving_front]
+    fixed_segments = []
+    moving_segments = []
+    for x_min in pod_slide_x_positions:
+        fixed_segments.append(
+            box(
+                POD_SLIDE_HEIGHT,
+                POD_SLIDE_LENGTH,
+                channel_thickness,
+                x_min,
+                fixed_y,
+                POD_FLOOR_Z - POD_SLIDE_THICKNESS,
+            )
+        )
+        moving_segments.append(
+            box(
+                POD_SLIDE_HEIGHT,
+                POD_SLIDE_LENGTH,
+                channel_thickness,
+                x_min,
+                moving_y,
+                POD_FLOOR_Z - channel_thickness,
+            )
+        )
+    return fixed_segments, moving_segments
 
 
 left_pod_closed = make_pod("left")
@@ -237,7 +227,17 @@ fixed_slide_segments = left_fixed_slides + right_fixed_slides
 moving_slide_segments_closed = left_moving_slides_closed + right_moving_slides_closed
 moving_slide_segments_open = left_moving_slides_open + right_moving_slides_open
 
+wall_service_chase_depth = 3.0
+wall_service_chase = box(
+    wall_service_chase_depth,
+    FRAME_WIDTH,
+    PEDESTAL_HEIGHT,
+    0,
+    FRAME_Y_MIN,
+    PEDESTAL_Z,
+)
 pedestal = box(OVERALL_LENGTH, FRAME_WIDTH, PEDESTAL_HEIGHT, 0, FRAME_Y_MIN, PEDESTAL_Z)
+pedestal = pedestal - wall_service_chase
 drawer_gap = 1.2
 drawer_width = 20.1
 drawer_step = 22.5
@@ -260,7 +260,7 @@ for y_min in (FRAME_Y_MIN, -FRAME_Y_MIN - SUPPORT_WIDTH):
     supports.append(profile(foot_leg_profile, y_min, y_min + SUPPORT_WIDTH))
     supports.append(box(3.2, SUPPORT_WIDTH, FLOOR_CLEARANCE, 43.4, y_min, 0))
 
-frame_parts = [pedestal_structure, headboard_structure] + rear_slide_mounts
+frame_parts = [pedestal_structure, headboard_structure]
 fixed_front_parts = drawer_faces + fixed_infills
 fixed_parts = frame_parts + fixed_front_parts + [deck, mattress] + supports + fixed_slide_segments
 closed_assembly = compound(fixed_parts + pods_closed + moving_slide_segments_closed)
@@ -294,7 +294,7 @@ report.bbox(
     (inches(OVERALL_LENGTH), inches(FRAME_WIDTH + 2 * POD_EXTENSION), inches(HEADBOARD_HEIGHT)),
     tol=0.05,
 )
-report.dimension(pedestal, "x", inches(OVERALL_LENGTH), tol=0.01)
+report.dimension(pedestal, "x", inches(OVERALL_LENGTH - wall_service_chase_depth), tol=0.01)
 report.dimension(deck, "x", inches(MATTRESS_LENGTH), tol=0.01)
 report.dimension(mattress, "x", inches(MATTRESS_LENGTH), tol=0.05)
 report.dimension(mattress, "y", inches(MATTRESS_WIDTH), tol=0.05)
@@ -305,6 +305,7 @@ report.no_interference(compound(pods_closed), headboard_structure)
 report.no_interference(compound(pods_open), headboard_structure)
 report.no_interference(compound(fixed_slide_segments), compound(pods_closed))
 report.no_interference(compound(fixed_slide_segments), compound(pods_open))
+report.no_interference(compound(fixed_slide_segments), headboard_structure)
 report.no_interference(
     box(
         1.4,
@@ -313,6 +314,17 @@ report.no_interference(
         0.05,
         -14,
         PEDESTAL_TOP + 1,
+    ),
+    compound(frame_parts),
+)
+report.no_interference(
+    box(
+        wall_service_chase_depth,
+        FRAME_WIDTH - 2 * SUPPORT_WIDTH,
+        7,
+        0,
+        FRAME_Y_MIN + SUPPORT_WIDTH,
+        3,
     ),
     compound(frame_parts),
 )
@@ -347,8 +359,16 @@ report._record(
     f"{POD_SLIDE_LENGTH:.0f} in slide envelope supports {POD_EXTENSION:.0f} in pod travel",
 )
 report._record(
-    len(rear_slide_mounts) == 2,
-    "open headboard back retains localized rear slide mounting rails",
+    len(slide_pockets) == 4,
+    "four concealed undershelf slide pockets modeled",
+)
+report._record(
+    central_service_cavity.bounding_box().size.Y > inches(30),
+    "central headboard service cavity is wider than 30 in",
+)
+report._record(
+    wall_service_chase_depth >= 3,
+    "wall-side pedestal setback clears a 3 in deep outlet and cable zone",
 )
 report.note("The 4 in mattress overlap is provisional pending the delivered Power-Flex base articulation envelope.")
 report.note("The pod slide geometry is a 24 x 2 x 0.375 in clearance envelope, not an exact hardware model.")
