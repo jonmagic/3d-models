@@ -1,0 +1,42 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "custom-king-storage-bed/*.py"
+      - "custom-king-storage-bed/build-guide.md"
+      - "custom-king-storage-bed/build-guide.sh"
+      - "custom-king-storage-bed/guide-freshness.rb"
+      - "custom-king-storage-bed/guide-assets/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check generated guide freshness
+        run: ruby custom-king-storage-bed/guide-freshness.rb check
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

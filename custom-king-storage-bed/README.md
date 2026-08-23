@@ -4,7 +4,9 @@ A conceptual build123d model for the California king storage bed around a Person
 
 `bed.py` is the parametric source of truth. It exports an exact STEP assembly plus separate STL groups for colored review renders. Generated files live under `build/` and are ignored.
 
-`modules.py` is the structural-chassis study. It replaces the pedestal envelope with six transportable carcass modules, five removable laminated crossmembers, eight midpoint through-bolts, and fifteen direct wood supports. Shared dimensions live in `design.py`.
+`modules.py` is the structural-chassis study. It replaces the pedestal envelope with six transportable carcass modules, five crossmember stations made from six physical laminated pieces, eight midpoint through-bolts, and fifteen direct wood supports. Shared dimensions live in `design.py`.
+
+`build-guide.md` is the phone-first illustrated construction plan and buildability register. The published HTML is generated from that source with embedded images and print styling for a future PDF.
 
 ## Working side-elevation geometry
 
@@ -86,7 +88,7 @@ The working chassis is divided into six 48-inch-long modules arranged three acro
 
 Each side module currently includes a 3/4-inch bottom, an inner longitudinal wall, a shallow outer top rail, and three lower transverse bulkheads at the end, drawer-divider, and midpoint interfaces. Eight explicit drawer-box envelopes preserve two openings per side module; each currently reserves 24 inches of depth, at least 20.75 inches of width, and approximately 5.25 inches of internal height before drawer-box and slide clearances. The center modules include bottom panels, outer walls, a doubled center beam, and service-opening bulkheads. The head-center bottom and beam preserve the existing 12-inch outlet and cable route.
 
-Five removable 1.5 × 5.5-inch laminated plywood crossmembers drop into notches at the head, drawer divisions, midpoint, and foot. They bridge left, center, and right modules while resting directly over the transverse bulkheads. The head crossmember is split around the 12-inch service opening. Each crossmember station has three hidden 3.5-inch-square wood supports beneath its left, center, and right load paths, for fifteen supports total. This removes the need for a long steel rail: loads travel from the adjustable base into a laminated crossmember, through a plywood bulkhead and bottom, and almost directly into a support.
+Five crossmember stations use six physical removable 1.5 × 5.5-inch laminated plywood pieces at the head, drawer divisions, midpoint, and foot. They bridge left, center, and right modules while resting directly over the transverse bulkheads. The head station is split into two pieces around the 12-inch service opening. Each crossmember station has three hidden 3.5-inch-square wood supports beneath its left, center, and right load paths, for fifteen supports total. This removes the need for a long steel rail: loads travel from the adjustable base into a laminated crossmember, through a plywood bulkhead and bottom, and almost directly into a support.
 
 At the 48-inch module seam, the paired plywood end bulkheads clamp directly together with eight provisional 3/8-inch through-bolts: three through each side-module pair and two through the center pair outside its service opening. The model includes 7/16-inch clearance holes. The 5.5-inch crossmember depth leaves a 1.75-inch lower bulkhead and 0.875-inch vertical bolt center-to-edge distance, which passes the study's minimum 2d geometry check but still needs tear-out testing in the selected plywood. Large washers or purchased load-spreading hardware, bolt grade, alignment dowels, edge tear-out, and repeated-assembly durability still require selection and testing; no fabricated steel plate is required.
 
@@ -115,9 +117,10 @@ The Power-Flex support interface also remains provisional. The five crossmember 
 
 ```sh
 ./build.sh
+./build-guide.sh
 ```
 
-The build fails when dimensional, validity, alignment, count, or interference assertions fail.
+`build.sh` regenerates and validates the CAD and renders. `build-guide.sh` regenerates the build-flow diagram and standalone HTML; it refreshes the chassis overview when CAD renders are present and otherwise reuses the committed overview image. `guide-freshness.rb check` fails when the committed HTML does not match its Markdown, diagrams, overview image, or CAD inputs.
 
 Outputs:
 
@@ -139,4 +142,6 @@ build/modules/{head-modules,foot-modules,crossmembers,seam-bolt-envelopes,drawer
 build/modules/{exact,colored-structure,colored-drawers}/*.png
 build/exact-{closed,open}/*.png
 build/colored-{closed,open}/*.png
+guide-assets/{build-sequence.svg,chassis-overview.png}
+../docs/custom-king-storage-bed/index.html
 ```

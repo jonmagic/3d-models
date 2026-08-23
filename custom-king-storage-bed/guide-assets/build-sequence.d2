@@ -1,0 +1,41 @@
+direction: down
+
+classes: {
+  ready: {
+    style.fill: "#dcfce7"
+    style.stroke: "#15803d"
+    style.border-radius: 10
+  }
+  work: {
+    style.fill: "#dbeafe"
+    style.stroke: "#2563eb"
+    style.border-radius: 10
+  }
+  gate: {
+    shape: diamond
+    style.fill: "#fef3c7"
+    style.stroke: "#b45309"
+  }
+  stop: {
+    style.fill: "#fee2e2"
+    style.stroke: "#b91c1c"
+    style.border-radius: 10
+  }
+}
+
+survey: "1. Freeze the room and finished envelope" {class: work}
+materials: "2. Select plywood and make joinery coupons" {class: work}
+design: "3. Correct the CAD and approve the cut list" {class: gate}
+chassis: "4. Build and dry-fit the lower chassis" {class: work}
+square: "Square, level, and rack-free?" {class: gate}
+correct: "Correct the chassis before finishing" {class: stop}
+base: "5. Measure the delivered Power-Flex halves" {class: work}
+adapter: "6. Field-fit the removable top adapter" {class: work}
+finish: "7. Build drawers, headboard, pods, and finish skins" {class: work}
+proof: "8. Controlled proof load and final installation" {class: ready}
+
+survey -> materials -> design -> chassis -> square
+square -> correct: "No"
+correct -> square
+square -> base: "Yes"
+base -> adapter -> finish -> proof
