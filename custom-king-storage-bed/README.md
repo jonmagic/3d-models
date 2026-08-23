@@ -4,7 +4,7 @@ A conceptual build123d model for the California king storage bed around a Person
 
 `bed.py` is the parametric source of truth. It exports an exact STEP assembly plus separate STL groups for colored review renders. Generated files live under `build/` and are ignored.
 
-`modules.py` is the structural-chassis study. It replaces the pedestal envelope with six transportable carcass modules, five removable laminated crossmembers, three midpoint splice plates, and the nine-support layout. Shared dimensions live in `design.py`.
+`modules.py` is the structural-chassis study. It replaces the pedestal envelope with six transportable carcass modules, five removable laminated crossmembers, eight midpoint through-bolts, and fifteen direct wood supports. Shared dimensions live in `design.py`.
 
 ## Working side-elevation geometry
 
@@ -86,9 +86,28 @@ The working chassis is divided into six 48-inch-long modules arranged three acro
 
 Each side module currently includes a 3/4-inch bottom, an inner longitudinal wall, a shallow outer top rail, and three lower transverse bulkheads at the end, drawer-divider, and midpoint interfaces. Eight explicit drawer-box envelopes preserve two openings per side module; each currently reserves 24 inches of depth, at least 20.75 inches of width, and approximately 5.25 inches of internal height before drawer-box and slide clearances. The center modules include bottom panels, outer walls, a doubled center beam, and service-opening bulkheads. The head-center bottom and beam preserve the existing 12-inch outlet and cable route.
 
-Five removable 1.5 × 4.5-inch laminated plywood crossmembers drop into notches at the head, drawer divisions, midpoint, and foot. They bridge left, center, and right modules while resting directly over the transverse bulkheads. The head crossmember is split around the 12-inch service opening. Three provisional 1/4-inch-thick by 2-inch-tall steel splice plates bridge the midpoint below the center crossmember on the left, center, and right longitudinal load paths. Alignment dowels, through-bolt sizes, plate holes, and captured-nut details are not modeled yet.
+Five removable 1.5 × 5.5-inch laminated plywood crossmembers drop into notches at the head, drawer divisions, midpoint, and foot. They bridge left, center, and right modules while resting directly over the transverse bulkheads. The head crossmember is split around the 12-inch service opening. Each crossmember station has three hidden 3.5-inch-square wood supports beneath its left, center, and right load paths, for fifteen supports total. This removes the need for a long steel rail: loads travel from the adjustable base into a laminated crossmember, through a plywood bulkhead and bottom, and almost directly into a support.
 
-The structural screening uses a 2,000-pound distributed chassis load and a separate 500-pound concentrated edge load. The current deterministic bending check covers only a laminated crossmember spanning the 12-inch center service opening, using conservative working plywood properties. This is a local, non-governing check: no longitudinal span, drawer-division reaction, or load transfer from the five crossmember stations to the three leg rows has been calculated yet. It does not establish a bed rating. Plywood grade and orientation, glue-lamination quality, bulkhead buckling, fastener capacity, splice plates, racking, feet, floor bearing, and proof loading remain unresolved.
+At the 48-inch module seam, the paired plywood end bulkheads clamp directly together with eight provisional 3/8-inch through-bolts: three through each side-module pair and two through the center pair outside its service opening. The model includes 7/16-inch clearance holes. The 5.5-inch crossmember depth leaves a 1.75-inch lower bulkhead and 0.875-inch vertical bolt center-to-edge distance, which passes the study's minimum 2d geometry check but still needs tear-out testing in the selected plywood. Large washers or purchased load-spreading hardware, bolt grade, alignment dowels, edge tear-out, and repeated-assembly durability still require selection and testing; no fabricated steel plate is required.
+
+The intended shop work uses ordinary woodworking tools. Break down 3/4-inch plywood with a track saw or table saw, cut the repeated crossmember notches with a router and template, laminate each crossmember from two plywood strips with glue and clamps, and drill the module-seam and leveling-foot holes with a handheld drill or drill press. The support blocks can be cut from ordinary 4×4 stock or laminated from plywood offcuts. Metalwork is limited to installing purchased bolts, washers, alignment dowels, threaded inserts, adjustable levelers, and crossmember hold-down screws; nothing requires cutting or welding steel.
+
+The assembly order is:
+
+1. Build the six plywood carcass modules with glued rabbets or dados and screws appropriate to the selected plywood.
+2. Make the five removable laminated crossmembers from the same routed template.
+3. Position and level the fifteen support blocks in five rows of three.
+4. Set the six modules on the supports and align their midpoint bulkheads with dowels.
+5. Clamp each head/foot module pair together with the eight midpoint through-bolts.
+6. Drop the five crossmembers into their matching notches and secure them to purchased wood cleats or other face-grain hold-down blocks.
+7. Fit the delivered Power-Flex halves, add their measured retention hardware, and route power, air hoses, and service wiring.
+8. Install the side skins, drawer faces, foot face, and modular headboard last so the structural fasteners remain serviceable.
+
+The structural screening combines a 2,000-pound distributed chassis load with a 500-pound concentrated edge load on one 34-inch crossmember span. The crossmember is conservatively treated as a simple span, while the shallow plywood bulkhead is treated only as local bearing. For member bending, the point load is placed at midspan; for support and floor bearing, it is placed at the actual 4-inch edge cantilever, producing an approximately 692-pound near-support reaction. The study checks bending stress, L/360 deflection, local plywood bulkhead compression, and a conservative plywood-bearing capacity for the two-bolt center seam against a provisional 250-pound lateral screen equal to 12.5% of the distributed vertical load. Direct supports under all five crossmember stations eliminate the previous unscreened longitudinal span between three leg rows.
+
+The full-depth inner longitudinal plywood walls provide the primary module shear panels. The five crossmembers captured in routed notches tie the three module columns together, and the midpoint bolts clamp the head and foot shear panels together. That is a defined racking path, not a completed racking-stiffness calculation. Edge-load uplift restraint, hold-down cleat sizing, fastener withdrawal, and repetitive motion remain unresolved.
+
+This still does not establish a bed rating. Plywood grade and orientation, glue-lamination quality, bolt grade and tear-out, crossmember fasteners, racking stiffness, adjustable levelers, the actual floor finish, and controlled proof loading remain unresolved.
 
 The Power-Flex support interface also remains provisional. The five crossmember stations are a furniture load path, not confirmation that the adjustable bases may bridge those spaces. Additional bearing rails or slats and field-located bolt plates must follow the delivered bases' stationary chassis, factory mounting points, and permitted support pattern.
 
@@ -116,7 +135,7 @@ build/deck.stl
 build/mattress.stl
 build/supports.stl
 build/modules/structural-modules.step
-build/modules/{head-modules,foot-modules,crossmembers,splice-plates,drawer-envelopes,supports}.stl
+build/modules/{head-modules,foot-modules,crossmembers,seam-bolt-envelopes,drawer-envelopes,supports}.stl
 build/modules/{exact,colored-structure,colored-drawers}/*.png
 build/exact-{closed,open}/*.png
 build/colored-{closed,open}/*.png

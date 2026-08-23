@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from build123d import Align, Box, Compound, Face, Pos, Vector, Wire, export_step, export_stl, extrude
+from build123d import Align, Box, Compound, Cylinder, Pos, Rot, export_step, export_stl
 from checks import Report
 from design import (
     CENTER_MODULE_WIDTH,
@@ -16,18 +16,19 @@ from design import (
     FLOOR_CLEARANCE,
     FRAME_WIDTH,
     MODULE_LENGTH,
+    LATERAL_RACKING_SCREEN_LOAD,
     OVERALL_LENGTH,
     PEDESTAL_HEIGHT,
     PLYWOOD_SCREENING_BENDING_ALLOWABLE,
+    PLYWOOD_SCREENING_COMPRESSION_ALLOWABLE,
     PLYWOOD_SCREENING_MODULUS,
     PLYWOOD_THICKNESS,
+    SEAM_BOLT_CLEARANCE_DIAMETER,
+    SEAM_BOLT_DIAMETER,
+    SEAM_BOLT_SCREENING_BEARING_STRESS,
     SERVICE_OPENING_WIDTH,
     SIDE_MODULE_WIDTH,
-    SPLICE_PLATE_HEIGHT,
-    SPLICE_PLATE_LENGTH,
-    SPLICE_PLATE_THICKNESS,
-    SUPPORT_EDGE_INSET,
-    SUPPORT_WIDTH,
+    STRUCTURAL_SUPPORT_SIZE,
 )
 
 IN = 25.4
@@ -47,14 +48,17 @@ def box(length: float, width: float, height: float, x: float, y: float, z: float
     return Pos(inches(x), inches(y), inches(z)) * solid
 
 
-def profile(points: list[tuple[float, float]], y_min: float, y_max: float):
-    vertices = [Vector(inches(x), inches(y_min), inches(z)) for x, z in points]
-    face = Face(Wire.make_polygon(vertices, close=True))
-    return extrude(face, amount=inches(y_max - y_min), dir=(0, 1, 0))
-
-
 def compound(parts: list):
     return Compound(parts)
+
+
+def seam_bolt_hole(y: float):
+    cylinder = Cylinder(
+        inches(SEAM_BOLT_CLEARANCE_DIAMETER / 2),
+        inches(2.5),
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    return Pos(inches(MODULE_LENGTH), inches(y), inches(SEAM_BOLT_Z)) * Rot(0, 90, 0) * cylinder
 
 
 FRAME_Y_MIN = -FRAME_WIDTH / 2
@@ -79,14 +83,19 @@ CENTER_MODULE_Y = -CENTER_MODULE_WIDTH / 2
 RIGHT_MODULE_Y = CENTER_MODULE_WIDTH / 2
 
 
-def splice_plate_z():
-    return CARCASS_BOTTOM_Z + (LOWER_BULKHEAD_HEIGHT - SPLICE_PLATE_HEIGHT) / 2
-
-
-def side_splice_plate_y(side: str):
-    if side == "left":
-        return LEFT_MODULE_Y + SIDE_MODULE_WIDTH - PLYWOOD_THICKNESS - SPLICE_PLATE_THICKNESS
-    return RIGHT_MODULE_Y + PLYWOOD_THICKNESS
+SEAM_BOLT_Z = CARCASS_BOTTOM_Z + LOWER_BULKHEAD_HEIGHT / 2
+SEAM_BOLT_Y_POSITIONS = (
+    LEFT_MODULE_Y + 3.0,
+    LEFT_MODULE_Y + SIDE_MODULE_WIDTH / 2,
+    LEFT_MODULE_Y + SIDE_MODULE_WIDTH - 3.0,
+    CENTER_MODULE_Y + 2.0,
+    CENTER_MODULE_Y + CENTER_MODULE_WIDTH - 2.0,
+    RIGHT_MODULE_Y + 3.0,
+    RIGHT_MODULE_Y + SIDE_MODULE_WIDTH / 2,
+    RIGHT_MODULE_Y + SIDE_MODULE_WIDTH - 3.0,
+)
+seam_bolt_holes = [seam_bolt_hole(y) for y in SEAM_BOLT_Y_POSITIONS]
+seam_bolt_hole_compound = compound(seam_bolt_holes)
 
 
 def relevant_crossmember_ranges(x_min: float, x_max: float):
@@ -169,16 +178,7 @@ def make_side_module(side: str, half: str):
         )
         for x in module_bulkhead_xs(half)
     ]
-    plate_pocket = box(
-        SPLICE_PLATE_LENGTH,
-        SPLICE_PLATE_THICKNESS,
-        SPLICE_PLATE_HEIGHT,
-        MODULE_LENGTH - SPLICE_PLATE_LENGTH / 2,
-        side_splice_plate_y(side),
-        splice_plate_z(),
-    )
-    bulkheads = [bulkhead - plate_pocket for bulkhead in bulkheads]
-    return compound([bottom, inner_wall, outer_top_rail] + bulkheads)
+    return compound([bottom, inner_wall, outer_top_rail] + bulkheads) - seam_bolt_hole_compound
 
 
 def service_bulkhead(x: float):
@@ -256,7 +256,7 @@ def make_center_module(half: str):
         PLYWOOD_THICKNESS,
     )
     bulkheads = [service_bulkhead(x) for x in module_bulkhead_xs(half)]
-    return compound([bottom, center_beam] + side_walls + bulkheads)
+    return compound([bottom, center_beam] + side_walls + bulkheads) - seam_bolt_hole_compound
 
 
 def make_crossmembers():
@@ -295,37 +295,6 @@ def make_crossmembers():
                 )
             )
     return members
-
-
-def make_splice_plates():
-    x = MODULE_LENGTH - SPLICE_PLATE_LENGTH / 2
-    z = splice_plate_z()
-    return [
-        box(
-            SPLICE_PLATE_LENGTH,
-            SPLICE_PLATE_THICKNESS,
-            SPLICE_PLATE_HEIGHT,
-            x,
-            side_splice_plate_y("left"),
-            z,
-        ),
-        box(
-            SPLICE_PLATE_LENGTH,
-            SPLICE_PLATE_THICKNESS,
-            SPLICE_PLATE_HEIGHT,
-            x,
-            PLYWOOD_THICKNESS,
-            z,
-        ),
-        box(
-            SPLICE_PLATE_LENGTH,
-            SPLICE_PLATE_THICKNESS,
-            SPLICE_PLATE_HEIGHT,
-            x,
-            side_splice_plate_y("right"),
-            z,
-        ),
-    ]
 
 
 def make_drawer_envelopes():
@@ -367,29 +336,27 @@ def make_drawer_envelopes():
     return envelopes
 
 
-head_leg_profile = [(1.4, 0), (3, FLOOR_CLEARANCE), (6.2, FLOOR_CLEARANCE), (5, 0)]
-center_head_leg_profile = [(3.4, 0), (5, FLOOR_CLEARANCE), (8.2, FLOOR_CLEARANCE), (7, 0)]
-foot_leg_profile = [
-    (OVERALL_LENGTH - 6, FLOOR_CLEARANCE),
-    (OVERALL_LENGTH - 7.2, FLOOR_CLEARANCE),
-    (OVERALL_LENGTH - 6, 0),
-    (OVERALL_LENGTH - SUPPORT_EDGE_INSET, 0),
-]
 supports = []
-for y_min in (
-    FRAME_Y_MIN + SUPPORT_EDGE_INSET,
-    -SUPPORT_WIDTH / 2,
-    -FRAME_Y_MIN - SUPPORT_EDGE_INSET - SUPPORT_WIDTH,
-):
-    supports.append(
-        profile(
-            center_head_leg_profile if y_min == -SUPPORT_WIDTH / 2 else head_leg_profile,
-            y_min,
-            y_min + SUPPORT_WIDTH,
-        )
+support_records = []
+for index, (x_min, x_max) in enumerate(CROSSMEMBER_X_RANGES):
+    crossmember_center_x = (x_min + x_max) / 2
+    default_support_x = min(
+        max(crossmember_center_x - STRUCTURAL_SUPPORT_SIZE / 2, 0),
+        OVERALL_LENGTH - STRUCTURAL_SUPPORT_SIZE,
     )
-    supports.append(profile(foot_leg_profile, y_min, y_min + SUPPORT_WIDTH))
-    supports.append(box(3.2, SUPPORT_WIDTH, FLOOR_CLEARANCE, OVERALL_LENGTH / 2 - 1.6, y_min, 0))
+    for support_center_y in (-34.0, 0.0, 34.0):
+        support_x = 3.4 if index == 0 and support_center_y == 0 else default_support_x
+        supports.append(
+            box(
+                STRUCTURAL_SUPPORT_SIZE,
+                STRUCTURAL_SUPPORT_SIZE,
+                FLOOR_CLEARANCE,
+                support_x,
+                support_center_y - STRUCTURAL_SUPPORT_SIZE / 2,
+                0,
+            )
+        )
+        support_records.append((index, support_center_y, support_x))
 
 left_head = make_side_module("left", "head")
 center_head = make_center_module("head")
@@ -401,9 +368,8 @@ head_modules = [left_head, center_head, right_head]
 foot_modules = [left_foot, center_foot, right_foot]
 modules = head_modules + foot_modules
 crossmembers = make_crossmembers()
-splice_plates = make_splice_plates()
 drawer_envelopes = make_drawer_envelopes()
-assembly = compound(modules + crossmembers + splice_plates + supports)
+assembly = compound(modules + crossmembers + supports)
 
 output = Path(__file__).parent / "build" / "modules"
 output.mkdir(parents=True, exist_ok=True)
@@ -411,23 +377,46 @@ export_step(assembly, output / "structural-modules.step")
 export_stl(compound(head_modules), output / "head-modules.stl")
 export_stl(compound(foot_modules), output / "foot-modules.stl")
 export_stl(compound(crossmembers), output / "crossmembers.stl")
-export_stl(compound(splice_plates), output / "splice-plates.stl")
 export_stl(compound(supports), output / "supports.stl")
 export_stl(compound(drawer_envelopes), output / "drawer-envelopes.stl")
+export_stl(seam_bolt_hole_compound, output / "seam-bolt-envelopes.stl")
 
-# Screening check for the crossmember segment spanning the 12-inch center service opening.
-service_span = SERVICE_OPENING_WIDTH
+# Screening check for one crossmember span under the distributed station load and edge point load.
+crossmember_span = 34.0
 section_inertia = CROSSMEMBER_WIDTH * CROSSMEMBER_DEPTH**3 / 12
 section_modulus = CROSSMEMBER_WIDTH * CROSSMEMBER_DEPTH**2 / 6
-point_moment = CHASSIS_EDGE_POINT_LOAD * service_span / 4
-point_stress = point_moment / section_modulus
-point_deflection = (
-    CHASSIS_EDGE_POINT_LOAD
-    * service_span**3
-    / (48 * PLYWOOD_SCREENING_MODULUS * section_inertia)
+crossmember_station_load = CHASSIS_DISTRIBUTED_DESIGN_LOAD / len(CROSSMEMBER_X_RANGES)
+uniform_line_load = crossmember_station_load / FRAME_WIDTH
+combined_moment = (
+    CHASSIS_EDGE_POINT_LOAD * crossmember_span / 4
+    + uniform_line_load * crossmember_span**2 / 8
 )
-deflection_limit = service_span / DEFLECTION_LIMIT_RATIO
-average_crossmember_load = CHASSIS_DISTRIBUTED_DESIGN_LOAD / len(CROSSMEMBER_X_RANGES)
+combined_stress = combined_moment / section_modulus
+combined_deflection = (
+    CHASSIS_EDGE_POINT_LOAD
+    * crossmember_span**3
+    / (48 * PLYWOOD_SCREENING_MODULUS * section_inertia)
+    + 5
+    * uniform_line_load
+    * crossmember_span**4
+    / (384 * PLYWOOD_SCREENING_MODULUS * section_inertia)
+)
+deflection_limit = crossmember_span / DEFLECTION_LIMIT_RATIO
+edge_cantilever = FRAME_WIDTH / 2 - crossmember_span
+edge_point_near_support_reaction = (
+    CHASSIS_EDGE_POINT_LOAD * (crossmember_span + edge_cantilever) / crossmember_span
+)
+worst_support_load = crossmember_station_load / 3 + edge_point_near_support_reaction
+bulkhead_bearing_area = PLYWOOD_THICKNESS * STRUCTURAL_SUPPORT_SIZE
+bulkhead_compression_stress = worst_support_load / bulkhead_bearing_area
+floor_bearing_pressure = worst_support_load / STRUCTURAL_SUPPORT_SIZE**2
+seam_bolt_vertical_edge_distance = LOWER_BULKHEAD_HEIGHT / 2
+center_seam_bolt_capacity = (
+    2
+    * SEAM_BOLT_SCREENING_BEARING_STRESS
+    * PLYWOOD_THICKNESS
+    * SEAM_BOLT_DIAMETER
+)
 
 report = Report("modular structural chassis")
 report.valid(assembly)
@@ -446,9 +435,10 @@ report.no_interference(center_head, right_head)
 report.no_interference(left_foot, center_foot)
 report.no_interference(center_foot, right_foot)
 report.no_interference(compound(crossmembers), compound(modules))
-report.no_interference(compound(splice_plates), compound(modules + crossmembers))
-report.no_interference(compound(drawer_envelopes), compound(modules + crossmembers + splice_plates))
-report.no_interference(compound(supports), compound(modules + crossmembers + splice_plates))
+report.no_interference(compound(drawer_envelopes), compound(modules + crossmembers))
+report.no_interference(compound(supports), compound(modules + crossmembers))
+report.no_interference(seam_bolt_hole_compound, compound(modules + crossmembers))
+report.solid_count(compound(supports), 15)
 minimum_drawer_width = min(
     (envelope.bounding_box().max.X - envelope.bounding_box().min.X) / IN
     for envelope in drawer_envelopes
@@ -461,6 +451,20 @@ minimum_drawer_height = min(
     (envelope.bounding_box().max.Z - envelope.bounding_box().min.Z) / IN
     for envelope in drawer_envelopes
 )
+for station_index, support_center_y, support_x in support_records:
+    crossmember_x_min, crossmember_x_max = CROSSMEMBER_X_RANGES[station_index]
+    support_x_max = support_x + STRUCTURAL_SUPPORT_SIZE
+    if station_index == 0 and support_center_y == 0:
+        report._record(
+            support_x <= 3.4 <= support_x_max,
+            "center-head support starts at the center-beam load path while preserving the wall service opening",
+        )
+    else:
+        overlap = min(support_x_max, crossmember_x_max) - max(support_x, crossmember_x_min)
+        report._record(
+            overlap > 0,
+            f"station {station_index + 1} support at Y={support_center_y:.0f} in overlaps its crossmember by {overlap:.2f} in",
+        )
 report._record(
     minimum_drawer_width >= 20.75 - 1e-6
     and minimum_drawer_depth >= DRAWER_ENVELOPE_DEPTH - 1e-6
@@ -468,17 +472,31 @@ report._record(
     f"eight drawer envelopes preserve at least {minimum_drawer_width:.2f} x {minimum_drawer_depth:.2f} x {minimum_drawer_height:.2f} in",
 )
 report._record(
-    point_stress <= PLYWOOD_SCREENING_BENDING_ALLOWABLE,
-    f"500 lb service-opening point-load bending stress {point_stress:.0f} psi <= {PLYWOOD_SCREENING_BENDING_ALLOWABLE:.0f} psi screening limit",
+    combined_stress <= PLYWOOD_SCREENING_BENDING_ALLOWABLE,
+    f"combined crossmember bending stress {combined_stress:.0f} psi <= {PLYWOOD_SCREENING_BENDING_ALLOWABLE:.0f} psi screening limit",
 )
 report._record(
-    point_deflection <= deflection_limit,
-    f"500 lb service-opening point-load deflection {point_deflection:.4f} in <= L/{DEFLECTION_LIMIT_RATIO:.0f} ({deflection_limit:.4f} in)",
+    combined_deflection <= deflection_limit,
+    f"combined crossmember deflection {combined_deflection:.4f} in <= L/{DEFLECTION_LIMIT_RATIO:.0f} ({deflection_limit:.4f} in)",
 )
-report.note(f"Distributed screening load: {CHASSIS_DISTRIBUTED_DESIGN_LOAD:.0f} lb, averaging {average_crossmember_load:.0f} lb across five crossmember stations.")
-report.note("The bending checks cover only the laminated crossmember over the 12 in center service opening.")
-report.note("No longitudinal span, drawer-division reaction, or load transfer from the crossmembers to the three leg rows has been calculated yet.")
-report.note("Plywood grade, lamination quality, bulkhead buckling, fasteners, splice plates, racking, feet, and floor bearing are not yet verified.")
+report._record(
+    bulkhead_compression_stress <= PLYWOOD_SCREENING_COMPRESSION_ALLOWABLE,
+    f"worst bulkhead compression {bulkhead_compression_stress:.0f} psi <= {PLYWOOD_SCREENING_COMPRESSION_ALLOWABLE:.0f} psi screening limit",
+)
+report._record(
+    center_seam_bolt_capacity >= LATERAL_RACKING_SCREEN_LOAD,
+    f"two-bolt center seam bearing screen {center_seam_bolt_capacity:.0f} lb >= {LATERAL_RACKING_SCREEN_LOAD:.0f} lb lateral screen",
+)
+report._record(
+    seam_bolt_vertical_edge_distance >= 2 * SEAM_BOLT_DIAMETER,
+    f"seam-bolt vertical center-to-edge distance {seam_bolt_vertical_edge_distance:.3f} in >= 2d ({2 * SEAM_BOLT_DIAMETER:.3f} in)",
+)
+report.note(f"Distributed screening load: {CHASSIS_DISTRIBUTED_DESIGN_LOAD:.0f} lb, averaging {crossmember_station_load:.0f} lb across five directly supported crossmember stations.")
+report.note("Crossmember bending uses a conservative simple 34 in span with the bulkhead treated only as local bearing; the real member is continuous over three supports.")
+report.note("The 500 lb edge case uses midspan placement for member bending and a 4 in cantilever reaction for support bearing.")
+report.note(f"Fifteen {STRUCTURAL_SUPPORT_SIZE:.1f} in square wood supports limit the screened worst-foot floor pressure to {floor_bearing_pressure:.0f} psi before leveler-pad sizing.")
+report.note("The seam screen checks plywood bearing only; bolt grade, washer size, tear-out, repeated assembly, and crossmember-to-module fasteners remain unresolved.")
+report.note("Plywood grade, lamination quality, racking stiffness, edge-load uplift restraint, adjustable levelers, floor finish, and proof loading are not yet verified.")
 report.note(f"Eight provisional drawer envelopes preserve {DRAWER_ENVELOPE_DEPTH:.0f} in depth and {DRAWER_ENVELOPE_HEIGHT:.2f} in internal height before drawer-box and slide clearances.")
 report.note("Power-Flex bearing locations and allowable chassis spans remain unknown until the delivered halves are measured.")
 report.done()
