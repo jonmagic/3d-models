@@ -46,13 +46,16 @@ HEADBOARD_HEIGHT = 36.0
 HEADBOARD_DEPTH = 14.0
 MATTRESS_OVERLAP = 4.0
 
-# Provisional front-view and construction dimensions.
-SIDE_MODULE_WIDTH = 2.0
+# Provisional front-view, pod, and construction dimensions.
 FACE_THICKNESS = 0.25
-CENTRAL_BACK_DEPTH = 1.5
-UPPER_PANEL_THICKNESS = 1.0
 DRAWER_FACE_HEIGHT = 6.0
 SUPPORT_WIDTH = 3.0
+POD_BODY_WIDTH = 18.0
+POD_EXTENSION = 16.0
+POD_END_CAP_THICKNESS = 0.75
+POD_WALL_THICKNESS = 0.75
+POD_SHELF_THICKNESS = 0.75
+POD_SHELF_TOP = 26.0
 
 FRAME_Y_MIN = -FRAME_WIDTH / 2
 MATTRESS_Y_MIN = -MATTRESS_WIDTH / 2
@@ -66,28 +69,71 @@ headboard_profile = [(0, PEDESTAL_TOP), (0, HEADBOARD_HEIGHT), (7, HEADBOARD_HEI
 pod_profile = [(1.5, 14.5), (1.5, 34.2), (6.5, 34.2), (9, 26), (9, 14.5)]
 fixed_infill_profile = [(9, 14.5), (9, 26), (12.5, 14.5)]
 
-# The center recess is what allows the deck and mattress to tuck behind the visible side modules.
-left_module = profile(headboard_profile, FRAME_Y_MIN, MATTRESS_Y_MIN)
-right_module = profile(headboard_profile, -MATTRESS_Y_MIN, -FRAME_Y_MIN)
-central_lower_back = box(CENTRAL_BACK_DEPTH, MATTRESS_WIDTH, MATTRESS_Z + MATTRESS_HEIGHT - PEDESTAL_TOP, 0, MATTRESS_Y_MIN, PEDESTAL_TOP)
-upper_panel_front_bottom = 7 + (HEADBOARD_HEIGHT - (MATTRESS_Z + MATTRESS_HEIGHT)) * (HEADBOARD_DEPTH - 7) / (HEADBOARD_HEIGHT - PEDESTAL_TOP)
-central_upper_profile = [
-    (7 - UPPER_PANEL_THICKNESS, HEADBOARD_HEIGHT),
-    (7, HEADBOARD_HEIGHT),
-    (upper_panel_front_bottom, MATTRESS_Z + MATTRESS_HEIGHT),
-    (upper_panel_front_bottom - UPPER_PANEL_THICKNESS, MATTRESS_Z + MATTRESS_HEIGHT),
-]
-central_upper_back = profile(central_upper_profile, MATTRESS_Y_MIN, -MATTRESS_Y_MIN)
-central_back = compound([central_lower_back, central_upper_back])
-
-left_pod = profile(pod_profile, FRAME_Y_MIN, FRAME_Y_MIN + FACE_THICKNESS)
-right_pod = profile(pod_profile, -FRAME_Y_MIN - FACE_THICKNESS, -FRAME_Y_MIN)
+# The full-width headboard is a cabinet. Its center recess accepts the mattress and deck,
+# while full-height cavities at each end contain the lateral pull-out pods.
+headboard_envelope = profile(headboard_profile, FRAME_Y_MIN, -FRAME_Y_MIN)
+center_recess = box(
+    HEADBOARD_DEPTH - MATTRESS_X + 1,
+    MATTRESS_WIDTH,
+    MATTRESS_Z + MATTRESS_HEIGHT - PEDESTAL_TOP,
+    MATTRESS_X,
+    MATTRESS_Y_MIN,
+    PEDESTAL_TOP,
+)
+left_pod_cavity = profile(pod_profile, FRAME_Y_MIN, FRAME_Y_MIN + POD_BODY_WIDTH)
+right_pod_cavity = profile(pod_profile, -FRAME_Y_MIN - POD_BODY_WIDTH, -FRAME_Y_MIN)
 left_infill = profile(fixed_infill_profile, FRAME_Y_MIN, FRAME_Y_MIN + FACE_THICKNESS)
 right_infill = profile(fixed_infill_profile, -FRAME_Y_MIN - FACE_THICKNESS, -FRAME_Y_MIN)
-pod_faces = [left_pod, right_pod]
 fixed_infills = [left_infill, right_infill]
-headboard_structure = compound([left_module, right_module]) - compound(pod_faces + fixed_infills)
-headboard_structure += central_back
+headboard_structure = headboard_envelope - center_recess - left_pod_cavity - right_pod_cavity - compound(fixed_infills)
+
+
+def make_pod(side: str):
+    if side == "left":
+        y_min = FRAME_Y_MIN
+        y_max = FRAME_Y_MIN + POD_BODY_WIDTH
+        cap_y = y_min
+        inner_wall_y = y_max - POD_WALL_THICKNESS
+    else:
+        y_min = -FRAME_Y_MIN - POD_BODY_WIDTH
+        y_max = -FRAME_Y_MIN
+        cap_y = y_max - POD_END_CAP_THICKNESS
+        inner_wall_y = y_min
+
+    end_cap = profile(pod_profile, cap_y, cap_y + POD_END_CAP_THICKNESS)
+    shelf = box(
+        9 - 1.5,
+        POD_BODY_WIDTH,
+        POD_SHELF_THICKNESS,
+        1.5,
+        y_min,
+        POD_SHELF_TOP - POD_SHELF_THICKNESS,
+    )
+    back_wall = box(
+        POD_WALL_THICKNESS,
+        POD_BODY_WIDTH,
+        POD_SHELF_TOP - 14.5,
+        1.5,
+        y_min,
+        14.5,
+    )
+    inner_wall = box(
+        9 - 1.5,
+        POD_WALL_THICKNESS,
+        POD_SHELF_TOP - 14.5,
+        1.5,
+        inner_wall_y,
+        14.5,
+    )
+    return end_cap + shelf + back_wall + inner_wall
+
+
+left_pod_closed = make_pod("left")
+right_pod_closed = make_pod("right")
+left_pod_open = Pos(0, -inches(POD_EXTENSION), 0) * left_pod_closed
+right_pod_open = Pos(0, inches(POD_EXTENSION), 0) * right_pod_closed
+pods_closed = [left_pod_closed, right_pod_closed]
+pods_open = [left_pod_open, right_pod_open]
 
 pedestal = box(OVERALL_LENGTH, FRAME_WIDTH, PEDESTAL_HEIGHT, 0, FRAME_Y_MIN, PEDESTAL_Z)
 drawer_gap = 1.2
@@ -113,23 +159,35 @@ for y_min in (FRAME_Y_MIN, -FRAME_Y_MIN - SUPPORT_WIDTH):
     supports.append(box(3.2, SUPPORT_WIDTH, FLOOR_CLEARANCE, 43.4, y_min, 0))
 
 frame_parts = [pedestal_structure, headboard_structure]
-front_parts = drawer_faces + pod_faces + fixed_infills
-assembly = compound(frame_parts + front_parts + [deck, mattress] + supports)
+fixed_front_parts = drawer_faces + fixed_infills
+fixed_parts = frame_parts + fixed_front_parts + [deck, mattress] + supports
+closed_assembly = compound(fixed_parts + pods_closed)
+open_assembly = compound(fixed_parts + pods_open)
 
 output = Path(__file__).parent / "build"
 output.mkdir(exist_ok=True)
-export_step(assembly, output / "custom-king-storage-bed.step")
+export_step(closed_assembly, output / "custom-king-storage-bed.step")
+export_step(closed_assembly, output / "custom-king-storage-bed-closed.step")
+export_step(open_assembly, output / "custom-king-storage-bed-open.step")
 export_stl(compound(frame_parts), output / "frame.stl")
-export_stl(compound(front_parts), output / "fronts.stl")
+export_stl(compound(fixed_front_parts), output / "fixed-fronts.stl")
+export_stl(compound(pods_closed), output / "pods-closed.stl")
+export_stl(compound(pods_open), output / "pods-open.stl")
 export_stl(deck, output / "deck.stl")
 export_stl(mattress, output / "mattress.stl")
 export_stl(compound(supports), output / "supports.stl")
 
 report = Report("custom king storage bed")
-report.valid(assembly)
+report.valid(closed_assembly)
+report.valid(open_assembly)
 report.bbox(
-    assembly,
+    closed_assembly,
     (inches(OVERALL_LENGTH), inches(FRAME_WIDTH), inches(HEADBOARD_HEIGHT)),
+    tol=0.05,
+)
+report.bbox(
+    open_assembly,
+    (inches(OVERALL_LENGTH), inches(FRAME_WIDTH + 2 * POD_EXTENSION), inches(HEADBOARD_HEIGHT)),
     tol=0.05,
 )
 report.dimension(pedestal, "x", inches(OVERALL_LENGTH), tol=0.01)
@@ -137,10 +195,11 @@ report.dimension(deck, "x", inches(MATTRESS_LENGTH), tol=0.01)
 report.dimension(mattress, "x", inches(MATTRESS_LENGTH), tol=0.05)
 report.dimension(mattress, "y", inches(MATTRESS_WIDTH), tol=0.05)
 report.dimension(pedestal, "z", inches(PEDESTAL_HEIGHT), tol=0.01)
-report.no_interference(mattress, compound([left_module, right_module]))
-report.no_interference(deck, compound([left_module, right_module]))
-report.no_interference(mattress, central_back)
-report.no_interference(deck, central_back)
+report.no_interference(mattress, headboard_structure)
+report.no_interference(deck, headboard_structure)
+report.no_interference(compound(pods_closed), headboard_structure)
+report.no_interference(compound(pods_open), headboard_structure)
+report.dimension(left_pod_closed, "y", inches(POD_BODY_WIDTH), tol=0.01)
 report._record(
     abs(mattress.bounding_box().max.X - pedestal.bounding_box().max.X) <= 0.01,
     "mattress, deck, and pedestal foot edges align",
@@ -153,7 +212,16 @@ report._record(
     len(drawer_faces) == 8,
     "eight base drawer faces modeled",
 )
+report._record(
+    abs(left_pod_open.bounding_box().min.Y - left_pod_closed.bounding_box().min.Y + inches(POD_EXTENSION)) <= 0.01
+    and abs(right_pod_open.bounding_box().max.Y - right_pod_closed.bounding_box().max.Y - inches(POD_EXTENSION)) <= 0.01,
+    f"both pods extend {POD_EXTENSION:.1f} in laterally",
+)
+report._record(
+    len(pods_closed) == 2,
+    "two lateral headboard pods modeled",
+)
 report.note("The 4 in mattress overlap is provisional pending the delivered Power-Flex base articulation envelope.")
-report.note("The 80 in frame width, 2 in side pod zones, central back panel, and pod mechanism depth are provisional pending front-view dimensions.")
-report.note(f"assembly volume: {volume_of(assembly):.2f} mm^3")
+report.note("The 80 in frame width, 18 in pod bodies, 16 in extension, 26 in shelf height, and pod mechanism are provisional pending front-view dimensions and hardware selection.")
+report.note(f"closed assembly volume: {volume_of(closed_assembly):.2f} mm^3")
 report.done()

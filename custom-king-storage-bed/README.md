@@ -21,11 +21,13 @@ A conceptual build123d model for the king storage bed around a Personal Comfort 
 
 The mattress, deck, and pedestal foot edges align. The outer supports are splayed and the center supports are rectangular.
 
-## Provisional front-view geometry
+## Headboard cabinet and pull-out pods
 
-The current model uses an 80-inch overall frame/headboard width, a centered 76-inch mattress and deck, 2-inch side pod zones, a recessed 1.5-inch-deep lower central back, and a 1-inch-thick sloped upper panel above the mattress. These values make the approved side elevation physically coherent without allowing the headboard to intersect the tucked mattress. They are not construction dimensions.
+The headboard is one full-width sloped cabinet. A centered lower recess allows the 76-inch mattress and Power-Flex deck to tuck 4 inches behind the visible side profile without intersecting the cabinet.
 
-The pod faces preserve the five-sided side profile and parallel angled reveal from the approved elevation. The light triangular infill remains fixed; it shares the drawer-front finish but is not part of the moving pod. The model does not yet define drawer boxes, slides, joinery, the pod shelf cavity, wiring, or the Power-Flex articulation envelope.
+An 18-inch-wide pod is stored laterally inside each end of the headboard. Each pod has a five-sided outer cap, a 26-inch-high shelf, a rear wall, and an inner retaining wall. In the open configuration each pod slides 16 inches beyond its side of the bed while 2 inches remain captured in the headboard, making the exposed shelf function like a compact nightstand for a CPAP and charging stand.
+
+The light triangular infill remains fixed to the cabinet and does not move with the pod. The pod width, extension, shelf height, walls, and slide mechanism are provisional pending front-view dimensions, equipment envelopes, and hardware selection.
 
 ## Build
 
@@ -39,11 +41,15 @@ Outputs:
 
 ```text
 build/custom-king-storage-bed.step
+build/custom-king-storage-bed-closed.step
+build/custom-king-storage-bed-open.step
 build/frame.stl
-build/fronts.stl
+build/fixed-fronts.stl
+build/pods-closed.stl
+build/pods-open.stl
 build/deck.stl
 build/mattress.stl
 build/supports.stl
-build/exact/custom-king-storage-bed-{iso,front,right,top}.png
-build/colored/frame-{iso,front,right,top}.png
+build/exact-{closed,open}/*.png
+build/colored-{closed,open}/*.png
 ```
