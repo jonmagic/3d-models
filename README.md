@@ -4,13 +4,14 @@ Parametric models I've designed for printing, plus a few downloads I've modified
 here is written for a **Prusa MK4 with a 0.4 mm nozzle**, mostly sliced in PrusaSlicer, and
 mostly printed in PLA or PETG.
 
-The source of truth is the `.scad` file. Meshes and g-code are build output and are
+The source of truth is the parametric `.scad` or build123d `.py` file. Meshes, STEP exports, and g-code are build output and are
 gitignored — run the project's `build.sh` to regenerate them.
 
 ## Projects
 
 | Project | What it is |
 |---|---|
+| [`custom-king-storage-bed/`](custom-king-storage-bed) | A build123d model of a king storage bed with an adjustable-base envelope, eight drawer faces, and sliding headboard pod geometry. |
 | [`cousin-camp-2026/`](cousin-camp-2026) | A parametric crown/diadem/tiara engine sized to a measured head circumference, and a five-finger piano keyboard designed as a two-colour press-fit assembly. |
 | `tornado.scad` | A spiral with a turn-based thickness profile and a reinforced bridge joint. |
 
@@ -24,7 +25,7 @@ constraint, not the object.
 
 ## Building
 
-Requires [OpenSCAD](https://openscad.org). Each project has its own `build.sh`:
+OpenSCAD projects require [OpenSCAD](https://openscad.org). The build123d bed project uses the shared `cad` and `scad` skills under `~/.agents/skills`. Each project has its own `build.sh`:
 
 ```bash
 cd cousin-camp-2026
