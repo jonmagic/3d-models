@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">8. Lay out the 17-support grid and set six modules</title>
+<desc id="desc">Station A supports both split members; stations B-E use left, center, and right supports.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">8. Lay out the 17-support grid and set six modules</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Station A supports both split members; stations B-E use left, center, and right supports.</text>
+<rect x="80" y="145" width="680" height="470" rx="4" fill="#e2e8f0" stroke="#334155" stroke-width="3"/>
+<rect x="90" y="145" width="20" height="198" rx="4" fill="#a78bfa" stroke="#334155" stroke-width="3"/>
+<rect x="90" y="417" width="20" height="198" rx="4" fill="#a78bfa" stroke="#334155" stroke-width="3"/>
+<rect x="73" y="143" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="73" y="303" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="73" y="403" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="73" y="563" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="93" y="353" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<text x="100" y="130" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="800" fill="#0f172a">A</text>
+<rect x="255" y="145" width="20" height="470" rx="4" fill="#a78bfa" stroke="#334155" stroke-width="3"/>
+<rect x="238" y="143" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="238" y="353" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="238" y="563" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<text x="265" y="130" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="800" fill="#0f172a">B</text>
+<rect x="420" y="145" width="20" height="470" rx="4" fill="#a78bfa" stroke="#334155" stroke-width="3"/>
+<rect x="403" y="143" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="403" y="353" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="403" y="563" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<text x="430" y="130" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="800" fill="#0f172a">C</text>
+<rect x="585" y="145" width="20" height="470" rx="4" fill="#a78bfa" stroke="#334155" stroke-width="3"/>
+<rect x="568" y="143" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="568" y="353" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="568" y="563" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<text x="595" y="130" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="800" fill="#0f172a">D</text>
+<rect x="750" y="145" width="20" height="470" rx="4" fill="#a78bfa" stroke="#334155" stroke-width="3"/>
+<rect x="733" y="143" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="733" y="353" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<rect x="733" y="563" width="54" height="54" rx="4" fill="#92400e" stroke="#334155" stroke-width="3"/>
+<text x="760" y="130" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="800" fill="#0f172a">E</text>
+<line x1="420" y1="145" x2="420" y2="615" stroke="#dc2626" stroke-width="5" stroke-dasharray="14 10"/>
+<line x1="80" y1="317" x2="760" y2="317" stroke="#334155" stroke-width="3"/>
+<line x1="80" y1="443" x2="760" y2="443" stroke="#334155" stroke-width="3"/>
+<text x="420" y="640" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="800" fill="#b91c1c">midpoint module seam</text>
+<rect x="790" y="155" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="808" y="189" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">A Y=0 block: X 3.8125-7.3125</text>
+<text x="808" y="217" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">A: Y -33.25, -8, 0, 8, 33.25</text>
+<text x="808" y="245" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">B-E: Y -33.25, 0, 33.25</text>
+<rect x="790" y="440" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="808" y="474" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Four cleats per block</text>
+<text x="808" y="502" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Check every edge bears</text>
+<text x="808" y="530" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">6 modules last</text>
+</svg>

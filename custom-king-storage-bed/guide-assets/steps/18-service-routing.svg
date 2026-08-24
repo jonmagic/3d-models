@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">18. Route power, pump hoses, and moving slack</title>
+<desc id="desc">Every connection remains visible, ventilated, strain-relieved, and clear of articulation.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">18. Route power, pump hoses, and moving slack</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Every connection remains visible, ventilated, strain-relieved, and clear of articulation.</text>
+<rect x="110" y="180" width="850" height="360" rx="4" fill="#e2e8f0" stroke="#334155" stroke-width="3"/>
+<text x="535.0" y="367.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">under-head service zone</text>
+<rect x="135" y="255" width="150" height="100" rx="4" fill="#c4b5fd" stroke="#334155" stroke-width="3"/>
+<text x="210.0" y="312.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">pump</text>
+<rect x="380" y="255" width="155" height="100" rx="4" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+<text x="457.5" y="312.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">base supply</text>
+<rect x="650" y="255" width="170" height="100" rx="4" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+<text x="735.0" y="312.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">base supply</text>
+<line x1="210" y1="255" x2="210" y2="145" stroke="#2563eb" stroke-width="7"/>
+<line x1="460" y1="255" x2="460" y2="145" stroke="#f59e0b" stroke-width="7"/>
+<line x1="735" y1="255" x2="735" y2="145" stroke="#f59e0b" stroke-width="7"/>
+<line x1="285" y1="305" x2="380" y2="305" stroke="#334155" stroke-width="4" stroke-dasharray="10 8"/>
+<line x1="535" y1="305" x2="650" y2="305" stroke="#334155" stroke-width="4" stroke-dasharray="10 8"/>
+<rect x="790" y="385" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="808" y="419" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">No buried power strips</text>
+<text x="808" y="447" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Service loops move freely</text>
+<text x="808" y="475" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Label both base halves</text>
+</svg>

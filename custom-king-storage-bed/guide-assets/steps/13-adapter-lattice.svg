@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">13. Transfer the base map to removable adapters</title>
+<desc id="desc">Each 1/4-inch panel becomes a field-fitted lattice with replaceable backing.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">13. Transfer the base map to removable adapters</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Each 1/4-inch panel becomes a field-fitted lattice with replaceable backing.</text>
+<rect x="110" y="155" width="760" height="450" rx="4" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+<rect x="180" y="210" width="620" height="340" rx="4" fill="#f8fafc" stroke="#dc2626" stroke-width="4"/>
+<text x="490.0" y="387.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">cutout / no-go zone</text>
+<rect x="150" y="155" width="40" height="450" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="450" y="155" width="40" height="450" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="830" y="155" width="40" height="450" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="110" y="180" width="760" height="35" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="110" y="385" width="760" height="35" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="110" y="565" width="760" height="35" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<circle cx="245" cy="360" r="17" fill="#22c55e" stroke="#15803d" stroke-width="3"/>
+<circle cx="730" cy="360" r="17" fill="#22c55e" stroke="#15803d" stroke-width="3"/>
+<rect x="835" y="160" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="853" y="194" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Blank: 84 x 36 x 0.25 in</text>
+<text x="853" y="222" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Trace one half per panel</text>
+<text x="853" y="250" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Cut openings with jigsaw</text>
+<rect x="835" y="430" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="853" y="464" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Backing only at verified holes</text>
+<text x="853" y="492" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Screw adapter to chassis</text>
+<text x="853" y="520" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Never drill base frame</text>
+</svg>

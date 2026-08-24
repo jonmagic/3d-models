@@ -6,29 +6,46 @@ from pathlib import Path
 from build123d import Align, Box, Compound, Cylinder, Pos, Rot, export_step, export_stl
 from checks import Report
 from design import (
+    ADAPTER_PANEL_THICKNESS,
+    ADAPTER_SUPPORT_RAIL_HEIGHT,
+    ADAPTER_SUPPORT_RAIL_WIDTH,
     CENTER_MODULE_WIDTH,
     CHASSIS_DISTRIBUTED_DESIGN_LOAD,
     CHASSIS_EDGE_POINT_LOAD,
     CROSSMEMBER_DEPTH,
+    CROSSMEMBER_NOTCH_CLEARANCE,
     CROSSMEMBER_WIDTH,
     CROSSMEMBER_X_RANGES,
     DEFLECTION_LIMIT_RATIO,
+    DRAWER_SLIDE_CARRIER_HEIGHT,
+    DRAWER_SLIDE_SIDE_CLEARANCE,
     FLOOR_CLEARANCE,
-    FRAME_WIDTH,
+    FACE_THICKNESS,
+    FOOT_FASCIA_THICKNESS,
+    FRAME_WIDTH as FINISHED_FRAME_WIDTH,
+    STRUCTURAL_FRAME_WIDTH as FRAME_WIDTH,
     MODULE_LENGTH,
     LATERAL_RACKING_SCREEN_LOAD,
-    OVERALL_LENGTH,
+    OVERALL_LENGTH as FINISHED_LENGTH,
+    STRUCTURAL_LENGTH as OVERALL_LENGTH,
     PEDESTAL_HEIGHT,
     PLYWOOD_SCREENING_BENDING_ALLOWABLE,
     PLYWOOD_SCREENING_COMPRESSION_ALLOWABLE,
     PLYWOOD_SCREENING_MODULUS,
-    PLYWOOD_THICKNESS,
+    STRUCTURAL_PLYWOOD_THICKNESS as PLYWOOD_THICKNESS,
     SEAM_BOLT_CLEARANCE_DIAMETER,
     SEAM_BOLT_DIAMETER,
+    SEAM_BOLT_WASHER_OD,
+    SEAM_SOCKET_ENVELOPE_DIAMETER,
     SEAM_BOLT_SCREENING_BEARING_STRESS,
     SERVICE_OPENING_WIDTH,
     SIDE_MODULE_WIDTH,
     STRUCTURAL_SUPPORT_SIZE,
+    SUPPORT_CAPTURE_CLEARANCE,
+    SUPPORT_CAPTURE_CLEAT_HEIGHT,
+    SUPPORT_CAPTURE_CLEAT_WIDTH,
+    SUPPORT_PAD_THICKNESS,
+    SLEEP_SYSTEM_X,
 )
 
 IN = 25.4
@@ -70,7 +87,7 @@ LOWER_BULKHEAD_HEIGHT = CROSSMEMBER_BOTTOM_Z - CARCASS_BOTTOM_Z
 OUTER_TOP_RAIL_DEPTH = 1.5
 OUTER_TOP_RAIL_WIDTH = 1.5
 DRAWER_ENVELOPE_DEPTH = 24.0
-DRAWER_ENVELOPE_SIDE_CLEARANCE = 0.5
+DRAWER_ENVELOPE_SIDE_CLEARANCE = DRAWER_SLIDE_SIDE_CLEARANCE
 DRAWER_ENVELOPE_VERTICAL_CLEARANCE = 0.25
 DRAWER_ENVELOPE_HEIGHT = (
     PEDESTAL_TOP
@@ -81,6 +98,12 @@ DRAWER_ENVELOPE_HEIGHT = (
 LEFT_MODULE_Y = FRAME_Y_MIN
 CENTER_MODULE_Y = -CENTER_MODULE_WIDTH / 2
 RIGHT_MODULE_Y = CENTER_MODULE_WIDTH / 2
+FINISHED_FRAME_Y_MIN = -FINISHED_FRAME_WIDTH / 2
+OUTER_SUPPORT_CENTER_Y = FRAME_WIDTH / 2 - 4.0
+DRAWER_FRONT_EDGE_GAP = 0.125
+DRAWER_FRONT_BOTTOM_Z = PEDESTAL_Z + 1.125
+DRAWER_FRONT_HEIGHT = PEDESTAL_HEIGHT - 2.25
+SUPPORT_CAPTURE_MARGIN = SUPPORT_CAPTURE_CLEARANCE + SUPPORT_CAPTURE_CLEAT_WIDTH
 
 
 SEAM_BOLT_Z = CARCASS_BOTTOM_Z + LOWER_BULKHEAD_HEIGHT / 2
@@ -105,10 +128,10 @@ def relevant_crossmember_ranges(x_min: float, x_max: float):
 def notch_for_crossmembers(part, x_min: float, x_max: float, y_min: float, y_max: float):
     notches = [
         box(
-            end - start,
+            end - start + CROSSMEMBER_NOTCH_CLEARANCE,
             y_max - y_min,
             CROSSMEMBER_DEPTH,
-            start,
+            start - CROSSMEMBER_NOTCH_CLEARANCE / 2,
             y_min,
             CROSSMEMBER_BOTTOM_Z,
         )
@@ -119,10 +142,24 @@ def notch_for_crossmembers(part, x_min: float, x_max: float, y_min: float, y_max
 
 def module_bulkhead_xs(half: str):
     x_min = 0.0 if half == "head" else MODULE_LENGTH
+    if half == "head":
+        return (
+            SUPPORT_CAPTURE_MARGIN,
+            x_min + MODULE_LENGTH / 2 - PLYWOOD_THICKNESS / 2,
+            x_min + MODULE_LENGTH - PLYWOOD_THICKNESS,
+        )
     return (
         x_min,
         x_min + MODULE_LENGTH / 2 - PLYWOOD_THICKNESS / 2,
-        x_min + MODULE_LENGTH - PLYWOOD_THICKNESS,
+        OVERALL_LENGTH - SUPPORT_CAPTURE_MARGIN - PLYWOOD_THICKNESS,
+    )
+
+
+def drawer_bay_x_ranges(x_min: float):
+    crossmember_ranges = relevant_crossmember_ranges(x_min, x_min + MODULE_LENGTH)
+    return (
+        (crossmember_ranges[0][1], crossmember_ranges[1][0]),
+        (crossmember_ranges[1][1], crossmember_ranges[2][0]),
     )
 
 
@@ -178,7 +215,29 @@ def make_side_module(side: str, half: str):
         )
         for x in module_bulkhead_xs(half)
     ]
-    return compound([bottom, inner_wall, outer_top_rail] + bulkheads) - seam_bolt_hole_compound
+    slide_carriers = []
+    for bay_start, bay_end in drawer_bay_x_ranges(x_min):
+        slide_carriers.extend(
+            [
+                box(
+                    PLYWOOD_THICKNESS,
+                    SIDE_MODULE_WIDTH,
+                    DRAWER_SLIDE_CARRIER_HEIGHT,
+                    bay_start,
+                    y_min,
+                    CROSSMEMBER_BOTTOM_Z,
+                ),
+                box(
+                    PLYWOOD_THICKNESS,
+                    SIDE_MODULE_WIDTH,
+                    DRAWER_SLIDE_CARRIER_HEIGHT,
+                    bay_end - PLYWOOD_THICKNESS,
+                    y_min,
+                    CROSSMEMBER_BOTTOM_Z,
+                ),
+            ]
+        )
+    return compound([bottom, inner_wall, outer_top_rail] + bulkheads + slide_carriers) - seam_bolt_hole_compound
 
 
 def service_bulkhead(x: float):
@@ -301,25 +360,16 @@ def make_drawer_envelopes():
     envelopes = []
     for half in ("head", "foot"):
         x_min = 0.0 if half == "head" else MODULE_LENGTH
-        crossmember_ranges = relevant_crossmember_ranges(x_min, x_min + MODULE_LENGTH)
-        x_ranges = (
-            (
-                crossmember_ranges[0][1] + DRAWER_ENVELOPE_SIDE_CLEARANCE,
-                crossmember_ranges[1][0] - DRAWER_ENVELOPE_SIDE_CLEARANCE,
-            ),
-            (
-                crossmember_ranges[1][1] + DRAWER_ENVELOPE_SIDE_CLEARANCE,
-                crossmember_ranges[2][0] - DRAWER_ENVELOPE_SIDE_CLEARANCE,
-            ),
-        )
-        for x_start, x_end in x_ranges:
+        for bay_start, bay_end in drawer_bay_x_ranges(x_min):
+            x_start = bay_start + PLYWOOD_THICKNESS + DRAWER_ENVELOPE_SIDE_CLEARANCE
+            x_end = bay_end - PLYWOOD_THICKNESS - DRAWER_ENVELOPE_SIDE_CLEARANCE
             envelopes.append(
                 box(
                     x_end - x_start,
                     DRAWER_ENVELOPE_DEPTH,
                     DRAWER_ENVELOPE_HEIGHT,
                     x_start,
-                    LEFT_MODULE_Y + PLYWOOD_THICKNESS,
+                    LEFT_MODULE_Y,
                     CARCASS_BOTTOM_Z + DRAWER_ENVELOPE_VERTICAL_CLEARANCE,
                 )
             )
@@ -329,11 +379,91 @@ def make_drawer_envelopes():
                     DRAWER_ENVELOPE_DEPTH,
                     DRAWER_ENVELOPE_HEIGHT,
                     x_start,
-                    RIGHT_MODULE_Y + SIDE_MODULE_WIDTH - PLYWOOD_THICKNESS - DRAWER_ENVELOPE_DEPTH,
+                    RIGHT_MODULE_Y + SIDE_MODULE_WIDTH - DRAWER_ENVELOPE_DEPTH,
                     CARCASS_BOTTOM_Z + DRAWER_ENVELOPE_VERTICAL_CLEARANCE,
                 )
             )
     return envelopes
+
+
+def make_finish_faces(drawer_envelopes):
+    faces = [
+        box(
+            FOOT_FASCIA_THICKNESS,
+            FINISHED_FRAME_WIDTH,
+            PEDESTAL_HEIGHT,
+            OVERALL_LENGTH,
+            FINISHED_FRAME_Y_MIN,
+            PEDESTAL_Z,
+        )
+    ]
+    for side in ("left", "right"):
+        y = FINISHED_FRAME_Y_MIN if side == "left" else FRAME_WIDTH / 2
+        faces.extend(
+            [
+                box(OVERALL_LENGTH, FACE_THICKNESS, 1.0, 0, y, PEDESTAL_Z),
+                box(OVERALL_LENGTH, FACE_THICKNESS, 1.0, 0, y, PEDESTAL_TOP - 1.0),
+            ]
+        )
+    for index, envelope in enumerate(drawer_envelopes):
+        bounds = envelope.bounding_box()
+        x_min = bounds.min.X / IN - (DRAWER_ENVELOPE_SIDE_CLEARANCE - DRAWER_FRONT_EDGE_GAP)
+        x_max = bounds.max.X / IN + (DRAWER_ENVELOPE_SIDE_CLEARANCE - DRAWER_FRONT_EDGE_GAP)
+        is_left = index % 2 == 0
+        y = FINISHED_FRAME_Y_MIN if is_left else FRAME_WIDTH / 2
+        faces.append(
+            box(
+                x_max - x_min,
+                FACE_THICKNESS,
+                DRAWER_FRONT_HEIGHT,
+                x_min,
+                y,
+                DRAWER_FRONT_BOTTOM_Z,
+            )
+        )
+    return faces
+
+
+def make_adapter_envelopes():
+    return [
+        box(
+            84.0,
+            36.0,
+            ADAPTER_PANEL_THICKNESS,
+            SLEEP_SYSTEM_X,
+            -36.0,
+            PEDESTAL_TOP,
+        ),
+        box(
+            84.0,
+            36.0,
+            ADAPTER_PANEL_THICKNESS,
+            SLEEP_SYSTEM_X,
+            0.0,
+            PEDESTAL_TOP,
+        ),
+    ]
+
+
+def make_adapter_support_rails():
+    rails = []
+    for (_, previous_end), (next_start, _) in zip(CROSSMEMBER_X_RANGES, CROSSMEMBER_X_RANGES[1:]):
+        gap = next_start - previous_end
+        for y in (
+            FRAME_Y_MIN + OUTER_TOP_RAIL_WIDTH,
+            FRAME_WIDTH / 2 - OUTER_TOP_RAIL_WIDTH - ADAPTER_SUPPORT_RAIL_WIDTH,
+        ):
+            rails.append(
+                box(
+                    gap,
+                    ADAPTER_SUPPORT_RAIL_WIDTH,
+                    ADAPTER_SUPPORT_RAIL_HEIGHT,
+                    previous_end,
+                    y,
+                    PEDESTAL_TOP - ADAPTER_SUPPORT_RAIL_HEIGHT,
+                )
+            )
+    return rails
 
 
 supports = []
@@ -341,22 +471,70 @@ support_records = []
 for index, (x_min, x_max) in enumerate(CROSSMEMBER_X_RANGES):
     crossmember_center_x = (x_min + x_max) / 2
     default_support_x = min(
-        max(crossmember_center_x - STRUCTURAL_SUPPORT_SIZE / 2, 0),
-        OVERALL_LENGTH - STRUCTURAL_SUPPORT_SIZE,
+        max(crossmember_center_x - STRUCTURAL_SUPPORT_SIZE / 2, SUPPORT_CAPTURE_MARGIN),
+        OVERALL_LENGTH - STRUCTURAL_SUPPORT_SIZE - SUPPORT_CAPTURE_MARGIN,
     )
-    for support_center_y in (-34.0, 0.0, 34.0):
-        support_x = 3.4 if index == 0 and support_center_y == 0 else default_support_x
+    support_center_ys = (
+        (-OUTER_SUPPORT_CENTER_Y, -8.0, 0.0, 8.0, OUTER_SUPPORT_CENTER_Y)
+        if index == 0
+        else (-OUTER_SUPPORT_CENTER_Y, 0.0, OUTER_SUPPORT_CENTER_Y)
+    )
+    for support_center_y in support_center_ys:
+        support_x = 3.0 + SUPPORT_CAPTURE_MARGIN if index == 0 and support_center_y == 0 else default_support_x
         supports.append(
             box(
                 STRUCTURAL_SUPPORT_SIZE,
                 STRUCTURAL_SUPPORT_SIZE,
-                FLOOR_CLEARANCE,
+                FLOOR_CLEARANCE - SUPPORT_PAD_THICKNESS,
                 support_x,
                 support_center_y - STRUCTURAL_SUPPORT_SIZE / 2,
-                0,
+                SUPPORT_PAD_THICKNESS,
             )
         )
         support_records.append((index, support_center_y, support_x))
+
+support_pads = [
+    box(
+        STRUCTURAL_SUPPORT_SIZE,
+        STRUCTURAL_SUPPORT_SIZE,
+        SUPPORT_PAD_THICKNESS,
+        support_x,
+        support_center_y - STRUCTURAL_SUPPORT_SIZE / 2,
+        0,
+    )
+    for _, support_center_y, support_x in support_records
+]
+support_capture_cleats = []
+for _, support_center_y, support_x in support_records:
+    support_y = support_center_y - STRUCTURAL_SUPPORT_SIZE / 2
+    for cleat_y in (
+        support_y - SUPPORT_CAPTURE_CLEARANCE - SUPPORT_CAPTURE_CLEAT_WIDTH,
+        support_y + STRUCTURAL_SUPPORT_SIZE + SUPPORT_CAPTURE_CLEARANCE,
+    ):
+        support_capture_cleats.append(
+            box(
+                STRUCTURAL_SUPPORT_SIZE,
+                SUPPORT_CAPTURE_CLEAT_WIDTH,
+                SUPPORT_CAPTURE_CLEAT_HEIGHT,
+                support_x,
+                cleat_y,
+                PEDESTAL_Z - SUPPORT_CAPTURE_CLEAT_HEIGHT,
+            )
+        )
+    for cleat_x in (
+        support_x - SUPPORT_CAPTURE_CLEARANCE - SUPPORT_CAPTURE_CLEAT_WIDTH,
+        support_x + STRUCTURAL_SUPPORT_SIZE + SUPPORT_CAPTURE_CLEARANCE,
+    ):
+        support_capture_cleats.append(
+            box(
+                SUPPORT_CAPTURE_CLEAT_WIDTH,
+                STRUCTURAL_SUPPORT_SIZE,
+                SUPPORT_CAPTURE_CLEAT_HEIGHT,
+                cleat_x,
+                support_y,
+                PEDESTAL_Z - SUPPORT_CAPTURE_CLEAT_HEIGHT,
+            )
+        )
 
 left_head = make_side_module("left", "head")
 center_head = make_center_module("head")
@@ -369,7 +547,22 @@ foot_modules = [left_foot, center_foot, right_foot]
 modules = head_modules + foot_modules
 crossmembers = make_crossmembers()
 drawer_envelopes = make_drawer_envelopes()
-assembly = compound(modules + crossmembers + supports)
+finish_faces = make_finish_faces(drawer_envelopes)
+adapter_envelopes = make_adapter_envelopes()
+adapter_support_rails = make_adapter_support_rails()
+structural_assembly = compound(
+    modules + crossmembers + supports + support_pads + support_capture_cleats + adapter_support_rails
+)
+assembly = compound(
+    modules
+    + crossmembers
+    + supports
+    + support_pads
+    + support_capture_cleats
+    + adapter_support_rails
+    + finish_faces
+    + adapter_envelopes
+)
 
 output = Path(__file__).parent / "build" / "modules"
 output.mkdir(parents=True, exist_ok=True)
@@ -378,11 +571,16 @@ export_stl(compound(head_modules), output / "head-modules.stl")
 export_stl(compound(foot_modules), output / "foot-modules.stl")
 export_stl(compound(crossmembers), output / "crossmembers.stl")
 export_stl(compound(supports), output / "supports.stl")
+export_stl(compound(support_pads), output / "support-pads.stl")
+export_stl(compound(support_capture_cleats), output / "support-capture-cleats.stl")
+export_stl(compound(finish_faces), output / "finish-faces.stl")
+export_stl(compound(adapter_envelopes), output / "adapter-envelopes.stl")
+export_stl(compound(adapter_support_rails), output / "adapter-support-rails.stl")
 export_stl(compound(drawer_envelopes), output / "drawer-envelopes.stl")
 export_stl(seam_bolt_hole_compound, output / "seam-bolt-envelopes.stl")
 
 # Screening check for one crossmember span under the distributed station load and edge point load.
-crossmember_span = 34.0
+crossmember_span = OUTER_SUPPORT_CENTER_Y
 section_inertia = CROSSMEMBER_WIDTH * CROSSMEMBER_DEPTH**3 / 12
 section_modulus = CROSSMEMBER_WIDTH * CROSSMEMBER_DEPTH**2 / 6
 crossmember_station_load = CHASSIS_DISTRIBUTED_DESIGN_LOAD / len(CROSSMEMBER_X_RANGES)
@@ -422,6 +620,15 @@ report = Report("modular structural chassis")
 report.valid(assembly)
 report.bbox(
     assembly,
+    (
+        inches(FINISHED_LENGTH),
+        inches(FINISHED_FRAME_WIDTH),
+        inches(PEDESTAL_TOP + ADAPTER_PANEL_THICKNESS),
+    ),
+    tol=0.05,
+)
+report.bbox(
+    structural_assembly,
     (inches(OVERALL_LENGTH), inches(FRAME_WIDTH), inches(PEDESTAL_TOP)),
     tol=0.05,
 )
@@ -437,8 +644,18 @@ report.no_interference(center_foot, right_foot)
 report.no_interference(compound(crossmembers), compound(modules))
 report.no_interference(compound(drawer_envelopes), compound(modules + crossmembers))
 report.no_interference(compound(supports), compound(modules + crossmembers))
+report.no_interference(compound(support_pads), compound(supports + modules))
+report.no_interference(compound(support_capture_cleats), compound(supports + modules))
+report.no_interference(compound(adapter_support_rails), compound(modules + crossmembers + drawer_envelopes))
+report.no_interference(compound(finish_faces), compound(modules + crossmembers))
+report.no_interference(compound(adapter_envelopes), compound(modules + crossmembers + finish_faces))
 report.no_interference(seam_bolt_hole_compound, compound(modules + crossmembers))
-report.solid_count(compound(supports), 15)
+report.solid_count(compound(supports), 17)
+report.solid_count(compound(support_pads), 17)
+report.solid_count(compound(support_capture_cleats), 68)
+report.solid_count(compound(adapter_support_rails), 8)
+report.solid_count(compound(finish_faces), 13)
+report.solid_count(compound(adapter_envelopes), 2)
 minimum_drawer_width = min(
     (envelope.bounding_box().max.X - envelope.bounding_box().min.X) / IN
     for envelope in drawer_envelopes
@@ -451,13 +668,15 @@ minimum_drawer_height = min(
     (envelope.bounding_box().max.Z - envelope.bounding_box().min.Z) / IN
     for envelope in drawer_envelopes
 )
+station_a_support_span = OUTER_SUPPORT_CENTER_Y - 8.0
 for station_index, support_center_y, support_x in support_records:
     crossmember_x_min, crossmember_x_max = CROSSMEMBER_X_RANGES[station_index]
     support_x_max = support_x + STRUCTURAL_SUPPORT_SIZE
     if station_index == 0 and support_center_y == 0:
+        beam_overlap = support_x_max - max(support_x, 3.4)
         report._record(
-            support_x <= 3.4 <= support_x_max,
-            "center-head support starts at the center-beam load path while preserving the wall service opening",
+            beam_overlap > 0 and support_x - SUPPORT_CAPTURE_MARGIN >= 3.0,
+            f"center-head support overlaps the center beam by {beam_overlap:.2f} in and keeps its head capture cleat beyond the 3 in service notch",
         )
     else:
         overlap = min(support_x_max, crossmember_x_max) - max(support_x, crossmember_x_min)
@@ -466,7 +685,22 @@ for station_index, support_center_y, support_x in support_records:
             f"station {station_index + 1} support at Y={support_center_y:.0f} in overlaps its crossmember by {overlap:.2f} in",
         )
 report._record(
-    minimum_drawer_width >= 20.75 - 1e-6
+    station_a_support_span <= crossmember_span,
+    f"each split station-A member has a {station_a_support_span:.2f} in support-center span <= the screened {crossmember_span:.2f} in B-E span",
+)
+report._record(
+    CROSSMEMBER_BOTTOM_Z - (SEAM_BOLT_Z + SEAM_SOCKET_ENVELOPE_DIAMETER / 2) >= 0,
+    f"a {SEAM_SOCKET_ENVELOPE_DIAMETER:.2f} in socket envelope clears the raised slide-carrier webs by {CROSSMEMBER_BOTTOM_Z - (SEAM_BOLT_Z + SEAM_SOCKET_ENVELOPE_DIAMETER / 2):.3f} in",
+)
+report._record(
+    module_bulkhead_xs("head")[0] >= SUPPORT_CAPTURE_MARGIN
+    and module_bulkhead_xs("head")[0] + PLYWOOD_THICKNESS <= SUPPORT_CAPTURE_MARGIN + STRUCTURAL_SUPPORT_SIZE
+    and module_bulkhead_xs("foot")[-1] >= OVERALL_LENGTH - STRUCTURAL_SUPPORT_SIZE - SUPPORT_CAPTURE_MARGIN
+    and module_bulkhead_xs("foot")[-1] + PLYWOOD_THICKNESS <= OVERALL_LENGTH - SUPPORT_CAPTURE_MARGIN,
+    "head and foot end bulkheads bear within the captured end-support footprints",
+)
+report._record(
+    minimum_drawer_width >= 19.25 - 1e-6
     and minimum_drawer_depth >= DRAWER_ENVELOPE_DEPTH - 1e-6
     and minimum_drawer_height >= DRAWER_ENVELOPE_HEIGHT - 1e-6,
     f"eight drawer envelopes preserve at least {minimum_drawer_width:.2f} x {minimum_drawer_depth:.2f} x {minimum_drawer_height:.2f} in",
@@ -491,12 +725,16 @@ report._record(
     seam_bolt_vertical_edge_distance >= 2 * SEAM_BOLT_DIAMETER,
     f"seam-bolt vertical center-to-edge distance {seam_bolt_vertical_edge_distance:.3f} in >= 2d ({2 * SEAM_BOLT_DIAMETER:.3f} in)",
 )
+report._record(
+    LOWER_BULKHEAD_HEIGHT - SEAM_BOLT_WASHER_OD >= 0.5,
+    f"{SEAM_BOLT_WASHER_OD:.2f} in washer leaves {(LOWER_BULKHEAD_HEIGHT - SEAM_BOLT_WASHER_OD) / 2:.3f} in to each bulkhead edge",
+)
 report.note(f"Distributed screening load: {CHASSIS_DISTRIBUTED_DESIGN_LOAD:.0f} lb, averaging {crossmember_station_load:.0f} lb across five directly supported crossmember stations.")
-report.note("Crossmember bending uses a conservative simple 34 in span with the bulkhead treated only as local bearing; the real member is continuous over three supports.")
+report.note(f"Crossmember bending uses the conservative {crossmember_span:.2f} in span from stations B-E with the bulkhead treated only as local bearing; those members are continuous over three supports, while each split station-A member bears on two supports.")
 report.note("The 500 lb edge case uses midspan placement for member bending and a 4 in cantilever reaction for support bearing.")
-report.note(f"Fifteen {STRUCTURAL_SUPPORT_SIZE:.1f} in square wood supports limit the screened worst-foot floor pressure to {floor_bearing_pressure:.0f} psi before leveler-pad sizing.")
+report.note(f"Seventeen {STRUCTURAL_SUPPORT_SIZE:.1f} in square wood supports retain their full footprint on {SUPPORT_PAD_THICKNESS:.4f} in provisional LVP-safe pads; station A has two supports under each split crossmember plus one under the center beam.")
 report.note("The seam screen checks plywood bearing only; bolt grade, washer size, tear-out, repeated assembly, and crossmember-to-module fasteners remain unresolved.")
 report.note("Plywood grade, lamination quality, racking stiffness, edge-load uplift restraint, adjustable levelers, floor finish, and proof loading are not yet verified.")
 report.note(f"Eight provisional drawer envelopes preserve {DRAWER_ENVELOPE_DEPTH:.0f} in depth and {DRAWER_ENVELOPE_HEIGHT:.2f} in internal height before drawer-box and slide clearances.")
-report.note("Power-Flex bearing locations and allowable chassis spans remain unknown until the delivered halves are measured.")
+report.note("The two 1/4 in Power-Flex adapter panels are cutout envelopes, not released parts; their bearing lattices, no-go openings, backing blocks, and mounting holes require the delivered halves.")
 report.done()

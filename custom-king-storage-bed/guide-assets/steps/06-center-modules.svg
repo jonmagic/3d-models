@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">6. Assemble the two center modules</title>
+<desc id="desc">The center beam carries the split-base seam; the head module preserves service access.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">6. Assemble the two center modules</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">The center beam carries the split-base seam; the head module preserves service access.</text>
+<rect x="105" y="180" width="435" height="350" rx="4" fill="#bae6fd" stroke="#334155" stroke-width="3"/>
+<text x="322.5" y="362.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">head-center module</text>
+<rect x="660" y="180" width="435" height="350" rx="4" fill="#bbf7d0" stroke="#334155" stroke-width="3"/>
+<text x="877.5" y="362.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">foot-center module</text>
+<rect x="305" y="180" width="40" height="350" rx="4" fill="#7dd3fc" stroke="#334155" stroke-width="3"/>
+<text x="325.0" y="362.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">beam</text>
+<rect x="860" y="180" width="40" height="350" rx="4" fill="#86efac" stroke="#334155" stroke-width="3"/>
+<text x="880.0" y="362.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">beam</text>
+<rect x="105" y="380" width="90" height="90" rx="4" fill="#f8fafc" stroke="#dc2626" stroke-width="4"/>
+<text x="150.0" y="432.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">service</text>
+<line x1="105" y1="575" x2="540" y2="575" stroke="#2563eb" stroke-width="2"/>
+<line x1="105" y1="567" x2="105" y2="583" stroke="#2563eb" stroke-width="2"/>
+<line x1="540" y1="567" x2="540" y2="583" stroke="#2563eb" stroke-width="2"/>
+<text x="322.5" y="565" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#1d4ed8">47.875 in</text>
+<line x1="585" y1="180" x2="585" y2="530" stroke="#2563eb" stroke-width="2"/>
+<line x1="577" y1="180" x2="593" y2="180" stroke="#2563eb" stroke-width="2"/>
+<line x1="577" y1="530" x2="593" y2="530" stroke="#2563eb" stroke-width="2"/>
+<text x="599" y="362.0" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#1d4ed8">20.00 in</text>
+<rect x="400" y="575" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="418" y="609" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Service opening: 12 in</text>
+<text x="418" y="637" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Keep glue and screws clear</text>
+<text x="418" y="665" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Confirm beam starts beyond notch</text>
+</svg>

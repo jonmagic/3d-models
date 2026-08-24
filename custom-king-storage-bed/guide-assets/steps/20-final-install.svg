@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">20. Install the sleep system and complete inspection</title>
+<desc id="desc">Two base halves, mattress, drawers, and pods must move without contact or inaccessible service.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">20. Install the sleep system and complete inspection</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Two base halves, mattress, drawers, and pods must move without contact or inaccessible service.</text>
+<rect x="160" y="420" width="800" height="130" rx="4" fill="#d6b98c" stroke="#334155" stroke-width="3"/>
+<text x="560.0" y="492.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">completed furniture chassis</text>
+<rect x="225" y="355" width="335" height="65" rx="4" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+<text x="392.5" y="394.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">left Power-Flex</text>
+<rect x="560" y="355" width="335" height="65" rx="4" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+<text x="727.5" y="394.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">right Power-Flex</text>
+<rect x="225" y="245" width="670" height="110" rx="4" fill="#f8fafc" stroke="#334155" stroke-width="3"/>
+<text x="560.0" y="307.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">72 x 84 in mattress</text>
+<rect x="160" y="135" width="800" height="110" rx="4" fill="#b45309" stroke="#334155" stroke-width="3"/>
+<text x="560.0" y="197.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">full-width headboard</text>
+<line x1="1015" y1="245" x2="1015" y2="550" stroke="#2563eb" stroke-width="2"/>
+<line x1="1007" y1="245" x2="1023" y2="245" stroke="#2563eb" stroke-width="2"/>
+<line x1="1007" y1="550" x2="1023" y2="550" stroke="#2563eb" stroke-width="2"/>
+<text x="1029" y="404.5" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#1d4ed8">27.25 in provisional mattress top</text>
+<rect x="70" y="565" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="88" y="599" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Cycle both halves</text>
+<text x="88" y="627" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Open every drawer and pod</text>
+<text x="88" y="655" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Confirm wall and cable clearance</text>
+<rect x="760" y="565" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="778" y="599" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Retorque after initial use</text>
+<text x="778" y="627" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Reinspect pads and joints</text>
+<text x="778" y="655" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Keep service map with guide</text>
+</svg>

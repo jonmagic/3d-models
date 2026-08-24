@@ -11,7 +11,9 @@ GUIDE_TEMPLATE="${GUIDE_TEMPLATE:-$HOME/.agents/skills/markdown-to-standalone-ht
   "$PROJECT_DIR/guide-assets/build-sequence.d2" \
   "$PROJECT_DIR/guide-assets/build-sequence.svg"
 
-CHASSIS_RENDER="$PROJECT_DIR/build/modules/colored-structure/head-modules-iso.png"
+python3 "$PROJECT_DIR/guide-images.py"
+
+CHASSIS_RENDER="$PROJECT_DIR/build/integrated-colored-closed/head-modules-iso.png"
 CHASSIS_GUIDE_IMAGE="$PROJECT_DIR/guide-assets/chassis-overview.png"
 if [[ -f "$CHASSIS_RENDER" ]]; then
   cp "$CHASSIS_RENDER" "$CHASSIS_GUIDE_IMAGE"

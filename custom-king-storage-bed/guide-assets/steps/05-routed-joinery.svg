@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">5. Route dados, rabbets, and crossmember seats</title>
+<desc id="desc">Use one reference face and the approved full-thickness coupon.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">5. Route dados, rabbets, and crossmember seats</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Use one reference face and the approved full-thickness coupon.</text>
+<rect x="155" y="380" width="730" height="110" rx="4" fill="#f5deb3" stroke="#334155" stroke-width="3"/>
+<text x="520.0" y="442.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">module wall</text>
+<rect x="450" y="225" width="145" height="265" rx="4" fill="#a78bfa" stroke="#334155" stroke-width="3"/>
+<text x="522.5" y="364.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">crossmember</text>
+<line x1="435" y1="380" x2="435" y2="490" stroke="#dc2626" stroke-width="4" stroke-dasharray="10 8"/>
+<line x1="610" y1="380" x2="610" y2="490" stroke="#dc2626" stroke-width="4" stroke-dasharray="10 8"/>
+<line x1="450" y1="535" x2="595" y2="535" stroke="#2563eb" stroke-width="2"/>
+<line x1="450" y1="527" x2="450" y2="543" stroke="#2563eb" stroke-width="2"/>
+<line x1="595" y1="527" x2="595" y2="543" stroke="#2563eb" stroke-width="2"/>
+<text x="522.5" y="525" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#1d4ed8">1.4375 in + verified clearance</text>
+<line x1="930" y1="225" x2="930" y2="490" stroke="#2563eb" stroke-width="2"/>
+<line x1="922" y1="225" x2="938" y2="225" stroke="#2563eb" stroke-width="2"/>
+<line x1="922" y1="490" x2="938" y2="490" stroke="#2563eb" stroke-width="2"/>
+<text x="944" y="364.5" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#1d4ed8">5.5 in</text>
+<rect x="70" y="150" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="88" y="184" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Template references</text>
+<text x="88" y="212" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">the same face on</text>
+<text x="88" y="240" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">every repeated part</text>
+<rect x="760" y="145" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="778" y="179" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Seat by hand</text>
+<text x="778" y="207" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">No hammering</text>
+<text x="778" y="235" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">No visible side play</text>
+</svg>

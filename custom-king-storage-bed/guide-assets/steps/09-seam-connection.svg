@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">9. Align and bolt the midpoint seams</title>
+<desc id="desc">Alignment features establish position; bolts clamp paired bulkheads.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">9. Align and bolt the midpoint seams</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Alignment features establish position; bolts clamp paired bulkheads.</text>
+<rect x="180" y="210" width="260" height="300" rx="4" fill="#bae6fd" stroke="#334155" stroke-width="3"/>
+<text x="310.0" y="367.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">head bulkhead</text>
+<rect x="460" y="210" width="260" height="300" rx="4" fill="#bbf7d0" stroke="#334155" stroke-width="3"/>
+<text x="590.0" y="367.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">foot bulkhead</text>
+<line x1="145" y1="275" x2="755" y2="275" stroke="#64748b" stroke-width="8"/>
+<circle cx="150" cy="275" r="16" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+<circle cx="750" cy="275" r="16" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+<line x1="145" y1="360" x2="755" y2="360" stroke="#64748b" stroke-width="8"/>
+<circle cx="150" cy="360" r="16" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+<circle cx="750" cy="360" r="16" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+<line x1="145" y1="445" x2="755" y2="445" stroke="#64748b" stroke-width="8"/>
+<circle cx="150" cy="445" r="16" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+<circle cx="750" cy="445" r="16" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+<circle cx="450" cy="315" r="14" fill="#f59e0b" stroke="#92400e" stroke-width="3"/>
+<circle cx="450" cy="405" r="14" fill="#f59e0b" stroke="#92400e" stroke-width="3"/>
+<line x1="180" y1="560" x2="720" y2="560" stroke="#2563eb" stroke-width="2"/>
+<line x1="180" y1="552" x2="180" y2="568" stroke="#2563eb" stroke-width="2"/>
+<line x1="720" y1="552" x2="720" y2="568" stroke="#2563eb" stroke-width="2"/>
+<text x="450.0" y="550" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#1d4ed8">paired bulkheads clamped flush</text>
+<rect x="790" y="190" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="808" y="224" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">3 bolts per side pair</text>
+<text x="808" y="252" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">2 bolts at center pair</text>
+<text x="808" y="280" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">8 total at midpoint</text>
+<rect x="790" y="420" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="808" y="454" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Large washers</text>
+<text x="808" y="482" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Tool access from drawers</text>
+<text x="808" y="510" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Do not bury hardware</text>
+</svg>

@@ -6,6 +6,7 @@ from pathlib import Path
 from build123d import Align, Box, Compound, Face, Pos, Vector, Wire, export_step, export_stl, extrude, fillet
 from checks import Report, volume_of
 from design import (
+    ADAPTER_PANEL_THICKNESS,
     DECK_HEIGHT,
     DRAWER_FACE_HEIGHT,
     FACE_THICKNESS,
@@ -25,19 +26,23 @@ from design import (
     OVERALL_LENGTH,
     PEDESTAL_HEIGHT,
     PLYWOOD_THICKNESS,
+    SLEEP_SYSTEM_X,
     POD_BODY_WIDTH,
     POD_CLEARANCE,
     POD_END_CAP_THICKNESS,
     POD_EXTENSION,
+    POD_MODULE_FLOOR_THICKNESS,
     POD_RAIL_HEIGHT,
     POD_SHELF_THICKNESS,
     POD_SLIDE_LENGTH,
     POD_SLIDE_THICKNESS,
     POD_WALL_THICKNESS,
     POD_WALL_TOP,
-    POWER_FLEX_ADVERTISED_TOTAL_CAPACITY,
+    POWER_FLEX_ADVERTISED_CAPACITY,
     SUPPORT_EDGE_INSET,
     SUPPORT_WIDTH,
+    WALL_CLEAT_DEPTH,
+    WALL_CLEAT_HEIGHT,
 )
 
 IN = 25.4
@@ -67,16 +72,18 @@ def compound(parts: list):
     return Compound(parts)
 
 
-POD_BOTTOM_Z = FLOOR_CLEARANCE + PEDESTAL_HEIGHT + POD_CLEARANCE
+POD_MODULE_FLOOR_Z = FLOOR_CLEARANCE + PEDESTAL_HEIGHT
+POD_RAIL_Z = POD_MODULE_FLOOR_Z + POD_MODULE_FLOOR_THICKNESS
+POD_BOTTOM_Z = POD_RAIL_Z + POD_CLEARANCE
 POD_FLOOR_Z = POD_BOTTOM_Z + POD_RAIL_HEIGHT + POD_CLEARANCE
 
 FRAME_Y_MIN = -FRAME_WIDTH / 2
 MATTRESS_Y_MIN = -MATTRESS_WIDTH / 2
 PEDESTAL_Z = FLOOR_CLEARANCE
 PEDESTAL_TOP = PEDESTAL_Z + PEDESTAL_HEIGHT
-DECK_Z = PEDESTAL_TOP
+DECK_Z = PEDESTAL_TOP + ADAPTER_PANEL_THICKNESS
 MATTRESS_Z = DECK_Z + DECK_HEIGHT
-MATTRESS_X = HEADBOARD_DEPTH - MATTRESS_OVERLAP
+MATTRESS_X = SLEEP_SYSTEM_X
 
 headboard_profile = [
     (0, PEDESTAL_TOP),
@@ -85,6 +92,7 @@ headboard_profile = [
     (HEADBOARD_DEPTH, PEDESTAL_TOP),
 ]
 pod_profile = [(1.5, POD_BOTTOM_Z), (1.5, 34.2), (6.5, 34.2), (9, 26), (9, POD_BOTTOM_Z)]
+pod_cavity_profile = [(1.5, PEDESTAL_TOP), (1.5, 34.2), (6.5, 34.2), (9, 26), (9, PEDESTAL_TOP)]
 fixed_infill_profile = [(9, PEDESTAL_TOP), (9, 26), (12.5, PEDESTAL_TOP)]
 
 # The full-width headboard is a cabinet. Its center recess accepts the mattress and deck,
@@ -98,8 +106,8 @@ center_recess = box(
     MATTRESS_Y_MIN,
     PEDESTAL_TOP,
 )
-left_pod_cavity = profile(pod_profile, FRAME_Y_MIN, FRAME_Y_MIN + POD_BODY_WIDTH)
-right_pod_cavity = profile(pod_profile, -FRAME_Y_MIN - POD_BODY_WIDTH, -FRAME_Y_MIN)
+left_pod_cavity = profile(pod_cavity_profile, FRAME_Y_MIN, FRAME_Y_MIN + POD_BODY_WIDTH)
+right_pod_cavity = profile(pod_cavity_profile, -FRAME_Y_MIN - POD_BODY_WIDTH, -FRAME_Y_MIN)
 left_infill = profile(fixed_infill_profile, FRAME_Y_MIN, FRAME_Y_MIN + FACE_THICKNESS)
 right_infill = profile(fixed_infill_profile, -FRAME_Y_MIN - FACE_THICKNESS, -FRAME_Y_MIN)
 fixed_infills = [left_infill, right_infill]
@@ -248,7 +256,7 @@ def make_pod_rail(side: str):
         POD_RAIL_HEIGHT,
         rail_rear_x,
         rail_y,
-        POD_BOTTOM_Z,
+        POD_RAIL_Z,
     )
 
 
@@ -266,6 +274,44 @@ fixed_slide_segments = left_fixed_slides + right_fixed_slides
 moving_slide_segments_closed = left_moving_slides_closed + right_moving_slides_closed
 moving_slide_segments_open = left_moving_slides_open + right_moving_slides_open
 pod_rails = [make_pod_rail("left"), make_pod_rail("right")]
+pod_module_floors = [
+    box(
+        7.5,
+        POD_BODY_WIDTH,
+        POD_MODULE_FLOOR_THICKNESS,
+        1.5,
+        FRAME_Y_MIN,
+        POD_MODULE_FLOOR_Z,
+    ),
+    box(
+        7.5,
+        POD_BODY_WIDTH,
+        POD_MODULE_FLOOR_THICKNESS,
+        1.5,
+        -FRAME_Y_MIN - POD_BODY_WIDTH,
+        POD_MODULE_FLOOR_Z,
+    ),
+]
+wall_cleat_side_margin = 1.5
+wall_cleat_half_width = (FRAME_WIDTH - 2 * wall_cleat_side_margin - service_drop_width) / 2
+wall_cleats = [
+    box(
+        WALL_CLEAT_DEPTH,
+        wall_cleat_half_width,
+        WALL_CLEAT_HEIGHT,
+        0,
+        FRAME_Y_MIN + wall_cleat_side_margin,
+        30.0,
+    ),
+    box(
+        WALL_CLEAT_DEPTH,
+        wall_cleat_half_width,
+        WALL_CLEAT_HEIGHT,
+        0,
+        service_drop_width / 2,
+        30.0,
+    ),
+]
 
 wall_service_chase_depth = 3.0
 wall_service_chase_width = FRAME_WIDTH - 2 * POD_BODY_WIDTH
@@ -322,7 +368,7 @@ for y_min in (
     supports.append(profile(foot_leg_profile, y_min, y_min + SUPPORT_WIDTH))
     supports.append(box(3.2, SUPPORT_WIDTH, FLOOR_CLEARANCE, OVERALL_LENGTH / 2 - 1.6, y_min, 0))
 
-frame_parts = [pedestal_structure, headboard_structure] + pod_rails
+frame_parts = [pedestal_structure, headboard_structure] + wall_cleats + pod_module_floors + pod_rails
 fixed_front_parts = drawer_faces + fixed_infills
 fixed_parts = frame_parts + fixed_front_parts + [deck, mattress] + supports + fixed_slide_segments
 closed_assembly = compound(fixed_parts + pods_closed + moving_slide_segments_closed)
@@ -334,6 +380,11 @@ export_step(closed_assembly, output / "custom-king-storage-bed.step")
 export_step(closed_assembly, output / "custom-king-storage-bed-closed.step")
 export_step(open_assembly, output / "custom-king-storage-bed-open.step")
 export_stl(compound(frame_parts), output / "frame.stl")
+export_stl(headboard_structure, output / "headboard.stl")
+export_stl(compound(pod_rails), output / "pod-rails.stl")
+export_stl(compound(pod_module_floors), output / "pod-module-floors.stl")
+export_stl(compound(wall_cleats), output / "wall-cleat.stl")
+export_stl(compound(fixed_infills), output / "fixed-infills.stl")
 export_stl(compound(fixed_front_parts), output / "fixed-fronts.stl")
 export_stl(compound(pods_closed), output / "pods-closed.stl")
 export_stl(compound(pods_open), output / "pods-open.stl")
@@ -370,6 +421,8 @@ report.no_interference(compound(fixed_slide_segments), compound(pods_closed))
 report.no_interference(compound(fixed_slide_segments), compound(pods_open))
 report.no_interference(compound(fixed_slide_segments), headboard_structure)
 report.no_interference(compound(pod_rails), headboard_structure)
+report.no_interference(compound(pod_module_floors), headboard_structure)
+report.no_interference(compound(wall_cleats), headboard_structure)
 report.no_interference(compound(moving_slide_segments_closed), headboard_structure)
 report.no_interference(compound(moving_slide_segments_open), headboard_structure)
 report.no_interference(compound(pod_rails), compound(pods_closed))
@@ -383,10 +436,10 @@ report.clearance(compound(pods_open), pedestal_structure, minimum=inches(POD_CLE
 report.no_interference(
     box(
         1.4,
-        28,
+        service_drop_width,
         HEADBOARD_HEIGHT - PEDESTAL_TOP - 3,
         0.05,
-        -14,
+        -service_drop_width / 2,
         PEDESTAL_TOP + 1,
     ),
     compound(frame_parts + supports),
@@ -438,14 +491,16 @@ report._record(
 )
 report.solid_count(compound(pods_closed), 2)
 report.solid_count(compound(pod_rails), 2)
+report.solid_count(compound(pod_module_floors), 2)
 report.note("The 4 in mattress overlap is provisional pending the delivered Power-Flex base articulation envelope.")
 report.note("The 72 x 84 x 3 in California King Power-Flex envelope is provisional; exact half dimensions, underside protrusions, support pattern, and wall travel are not published.")
-report.note("Two independent Power-Flex halves require two accessible power-supply and cord routes plus optional sync-cable routing.")
-report.note(f"LOAD MARGIN: {OCCUPANT_DESIGN_LOAD:.0f} lb of occupants leaves only {POWER_FLEX_ADVERTISED_TOTAL_CAPACITY - OCCUPANT_DESIGN_LOAD:.0f} lb under the advertised Power-Flex total capacity for the mattress and bedding.")
-report.note("The furniture chassis must also carry both base halves and dynamic loading; the nine-leg layout is not a structural capacity calculation.")
+report.note("Two independent Power-Flex halves require two accessible power-supply and cord routes; the product page says paired bases synchronize without a cable.")
+report.note(f"CAPACITY AMBIGUITY: the product page lists {POWER_FLEX_ADVERTISED_CAPACITY:.0f} lb without defining whether that is per half or per sleep surface, or which loads it includes.")
+report.note("The furniture chassis must also carry both base halves and dynamic loading; the exterior model's support shapes are visual context, not the validated seventeen-support chassis.")
 report.note(f"Length budget: {HEADBOARD_DEPTH:.0f} in headboard + {MATTRESS_LENGTH:.0f} in mattress - {MATTRESS_OVERLAP:.0f} in tuck + {MATTRESS_FOOT_MARGIN:.0f} in foot lip = {OVERALL_LENGTH:.0f} in; zero-tuck fallback is {HEADBOARD_DEPTH + MATTRESS_LENGTH + MATTRESS_FOOT_MARGIN:.0f} in.")
-report.note("Pump location, base retention, room side clearances, and pod overturning resistance remain unresolved.")
-report.note("The pod slide geometry is a 24 x 2 x 0.375 in clearance envelope, not an exact hardware model.")
-report.note("The 76 in frame width, 25.625 in pod bodies, 16 in extension, 15.125 in pod shelf height, and pod mechanism are provisional pending front-view dimensions and hardware selection.")
+report.note("The modeled wall cleat is the primary headboard and pod-overturning load path; a qualified reviewer must size its anchors after wall framing and construction are verified.")
+report.note("The pod slide envelope now follows the 16 in Accuride 9308E: 3 in high, 0.75 in side space, full 16 in travel, lock-in/lock-out, and non-disconnect.")
+report.note(f"The 76 in frame width, {POD_BODY_WIDTH:.3f} in pod bodies, 16 in extension, {POD_FLOOR_Z + POD_SHELF_THICKNESS:.3f} in pod shelf top, upper anti-rack guide, and mounting reinforcement remain subject to a full-size hardware mockup.")
+report.note("Each pod rail bears on a dedicated 3/4 in module floor; final through-bolt, backing, downward-reaction, and uplift-reaction details depend on the full-size slide mockup.")
 report.note(f"closed assembly volume: {volume_of(closed_assembly):.2f} mm^3")
 report.done()

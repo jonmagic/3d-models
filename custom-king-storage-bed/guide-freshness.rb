@@ -7,14 +7,19 @@ repo_dir = File.expand_path("..", project_dir)
 html_path = File.join(repo_dir, "docs", "custom-king-storage-bed", "index.html")
 source_paths = %w[
   bed.py
+  build.sh
   build-guide.md
   build-guide.sh
   design.py
+  guide-images.py
+  integrated.py
   modules.py
+  README.md
   guide-assets/build-sequence.d2
   guide-assets/build-sequence.svg
   guide-assets/chassis-overview.png
 ].map { |path| File.join(project_dir, path) }
+source_paths.concat(Dir.glob(File.join(project_dir, "guide-assets", "steps", "*.svg")).sort)
 
 missing = source_paths.reject { |path| File.file?(path) }
 abort "Missing guide source: #{missing.join(", ")}" unless missing.empty?

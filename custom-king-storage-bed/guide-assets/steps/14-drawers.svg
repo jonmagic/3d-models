@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">14. Build drawers on independent slide carriers</title>
+<desc id="desc">Keep hardware off removable crossmembers and preserve midpoint bolt access.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">14. Build drawers on independent slide carriers</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Keep hardware off removable crossmembers and preserve midpoint bolt access.</text>
+<rect x="90" y="205" width="680" height="330" rx="4" fill="#bae6fd" stroke="#334155" stroke-width="3"/>
+<text x="430.0" y="377.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">side module</text>
+<rect x="150" y="270" width="240" height="190" rx="4" fill="#fed7aa" stroke="#334155" stroke-width="3"/>
+<text x="270.0" y="372.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">drawer box</text>
+<rect x="465" y="270" width="240" height="190" rx="4" fill="#fed7aa" stroke="#334155" stroke-width="3"/>
+<text x="585.0" y="372.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">drawer box</text>
+<rect x="135" y="285" width="15" height="160" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="390" y="285" width="15" height="160" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="450" y="285" width="15" height="160" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="705" y="285" width="15" height="160" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<rect x="120" y="260" width="25" height="210" rx="4" fill="#d97706" stroke="#334155" stroke-width="3"/>
+<rect x="390" y="260" width="25" height="210" rx="4" fill="#d97706" stroke="#334155" stroke-width="3"/>
+<rect x="450" y="260" width="25" height="210" rx="4" fill="#d97706" stroke="#334155" stroke-width="3"/>
+<rect x="720" y="260" width="25" height="210" rx="4" fill="#d97706" stroke="#334155" stroke-width="3"/>
+<line x1="770" y1="205" x2="770" y2="535" stroke="#dc2626" stroke-width="4" stroke-dasharray="12 8"/>
+<circle cx="770" cy="345" r="13" fill="#f59e0b" stroke="#92400e" stroke-width="3"/>
+<text x="765" y="385" text-anchor="end" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="800" fill="#0f172a">module seam bolt</text>
+<rect x="800" y="180" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="818" y="214" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Use hardware&#x27;s side clearance</text>
+<text x="818" y="242" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Shim mounting faces flat</text>
+<text x="818" y="270" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Test disconnect/reinstall</text>
+<rect x="800" y="430" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="818" y="464" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Remove drawer</text>
+<text x="818" y="492" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Reach every seam bolt</text>
+<text x="818" y="520" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Then fit overlay front</text>
+</svg>

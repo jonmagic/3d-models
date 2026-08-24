@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">19. Proof-load the empty chassis in stages</title>
+<desc id="desc">Use distributed dead load, pause at each stage, and stop at any change.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">19. Proof-load the empty chassis in stages</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Use distributed dead load, pause at each stage, and stop at any change.</text>
+<rect x="145" y="405" width="830" height="140" rx="4" fill="#bae6fd" stroke="#334155" stroke-width="3"/>
+<text x="560.0" y="482.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">finished lower chassis</text>
+<rect x="220" y="320" width="90" height="85" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<text x="265.0" y="369.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">load</text>
+<rect x="380" y="320" width="90" height="85" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<text x="425.0" y="369.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">load</text>
+<rect x="540" y="320" width="90" height="85" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<text x="585.0" y="369.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">load</text>
+<rect x="700" y="320" width="90" height="85" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<text x="745.0" y="369.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">load</text>
+<rect x="860" y="320" width="90" height="85" rx="4" fill="#64748b" stroke="#334155" stroke-width="3"/>
+<text x="905.0" y="369.5" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">load</text>
+<line x1="145" y1="585" x2="975" y2="585" stroke="#16a34a" stroke-width="5"/>
+<rect x="75" y="155" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="93" y="189" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Stage 1: light distributed load</text>
+<text x="93" y="217" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Measure level and diagonals</text>
+<text x="93" y="245" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Inspect joints and LVP</text>
+<rect x="425" y="155" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="443" y="189" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Stage 2: increase evenly</text>
+<text x="443" y="217" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Pause and listen</text>
+<text x="443" y="245" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Recheck supports</text>
+<rect x="775" y="155" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="793" y="189" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Stage 3: approved target</text>
+<text x="793" y="217" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Hold, unload, remeasure</text>
+<text x="793" y="245" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Stop on noise or movement</text>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">11. Square, level, and rack-test the chassis</title>
+<desc id="desc">Record measurements before finish panels hide the structure.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="#f8fafc"/>
+<rect x="24" y="24" width="1152" height="672" rx="18" fill="url(#grid)" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" fill="#0f172a">11. Square, level, and rack-test the chassis</text>
+<text x="60" y="104" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="500" fill="#475569">Record measurements before finish panels hide the structure.</text>
+<rect x="180" y="170" width="720" height="420" rx="4" fill="#dbeafe" stroke="#334155" stroke-width="3"/>
+<text x="540.0" y="387.0" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">assembled lower chassis</text>
+<line x1="180" y1="170" x2="900" y2="590" stroke="#dc2626" stroke-width="5"/>
+<line x1="900" y1="170" x2="180" y2="590" stroke="#2563eb" stroke-width="5"/>
+<line x1="180" y1="625" x2="900" y2="625" stroke="#2563eb" stroke-width="2"/>
+<line x1="180" y1="617" x2="180" y2="633" stroke="#2563eb" stroke-width="2"/>
+<line x1="900" y1="617" x2="900" y2="633" stroke="#2563eb" stroke-width="2"/>
+<text x="540.0" y="615" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#1d4ed8">diagonals equal within approved tolerance</text>
+<line x1="115" y1="550" x2="965" y2="550" stroke="#16a34a" stroke-width="5"/>
+<text x="540" y="540" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="800" fill="#15803d">level reference</text>
+<rect x="790" y="210" width="350" height="126" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+<text x="808" y="244" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Push at each corner</text>
+<text x="808" y="272" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Recheck diagonals</text>
+<text x="808" y="300" text-anchor="start" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#0f172a">Inspect every support</text>
+</svg>
