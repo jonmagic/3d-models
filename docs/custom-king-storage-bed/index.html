@@ -432,6 +432,7 @@ body { font-size: 17px; }
 .stop { background: #ffe8e8; border-left: 5px solid #b91c1c; }
 .check { background: #e9f9ee; border-left: 5px solid #15803d; }
 .warning { background: #fff7ed; border-left: 5px solid #c2410c; }
+.status strong, .decision strong, .stop strong, .check strong, .warning strong { color: inherit; }
 .step { border: 1px solid var(--subtle-border); border-radius: 14px; margin: 1.5rem 0; padding: 0 1rem 1rem; }
 .step h3 { margin-top: 1rem; }
 .tools { color: var(--muted); font-size: 0.95rem; }
@@ -441,6 +442,13 @@ nav a, .print-button { align-items: center; background: var(--subtle-bg); border
 table { display: block; max-width: 100%; overflow-x: auto; white-space: nowrap; }
 th, td { padding: 0.5rem 0.75rem; vertical-align: top; }
 img { background: #f8fafc; border: 1px solid var(--subtle-border); border-radius: 12px; box-sizing: border-box; display: block; margin: 1rem auto; width: 100%; }
+@media (prefers-color-scheme: dark) {
+  .status { background: #2d2608; border-color: #d29922; color: var(--text); }
+  .decision { background: #0c2d4a; border-color: #58a6ff; }
+  .stop { background: #3d1418; border-color: #f85149; }
+  .check { background: #102d19; border-color: #3fb950; }
+  .warning { background: #3d2410; border-color: #d29922; }
+}
 @media (min-width: 760px) { nav ul { grid-template-columns: repeat(2, 1fr); } }
 @media print {
   :root { color-scheme: light; }
@@ -1784,4 +1792,4 @@ ADURA care and maintenance</a></li>
     </div>
 </body>
 </html>
-<!-- build-guide-source-sha256: 49ea78351713700bd6612b83d94b9159f48bd5c8f731f8a32ef6775ba0b514f9 -->
+<!-- build-guide-source-sha256: d3d3aa3af9d5fa8aea913d081679dee856f7129f6c2e865ff8b46860596a41bb -->
