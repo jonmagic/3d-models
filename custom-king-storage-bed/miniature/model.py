@@ -34,12 +34,13 @@ LENGTH = full.OVERALL_LENGTH * MM
 SIDE_INSET = full.FACE_THICKNESS * MM
 WALL = 1.8
 COLLAR = 8.4
-DIVIDER = 2.0
+DIVIDER = 2*COLLAR
 KEY_HEIGHT = 5.0
 PIN_SIZE = 4.0
 PIN_HEIGHT = 3.6
 HOLE_DEPTH = 2.25
 DRAWER_TRAVEL = 35.0
+DRAWER_BODY_HEIGHT = 13.4
 POD_TRAVEL = full.POD_EXTENSION * MM
 POD_LENGTH = 72.0
 CAP = 1.9
@@ -114,6 +115,9 @@ def make_module(width, side, fit):
         for x in (COLLAR, COLLAR+opening+DIVIDER):
             result -= box(opening, width-COLLAR+EPS, HEIGHT,
                           (x, -EPS, WALL))
+        # Two thin guide walls keep the wide center divider light behind the full faces.
+        result -= box(DIVIDER-2*WALL, width-COLLAR+EPS, HEIGHT,
+                      (L/2-DIVIDER/2+WALL, -EPS, WALL))
     else:
         result -= box(L-2*COLLAR, width-2*COLLAR, HEIGHT,
                       (COLLAR, COLLAR, WALL))
@@ -130,12 +134,18 @@ def make_module(width, side, fit):
 
 def make_drawer(fit):
     opening = (L-2*COLLAR-DIVIDER)/2
-    w, d, h = opening-2*fit, SIDE-COLLAR-fit, 13.4
-    tray = box(w, d, h) - box(w-2*WALL, d-2*WALL, h,
-                              (WALL, WALL, WALL))
-    front = box(w+2.0, SIDE_INSET, 15.5, (-1.0, -SIDE_INSET, 0))
-    front -= box(10, SIDE_INSET+2*EPS, 3.6+EPS,
-                 (w/2-5, -SIDE_INSET-EPS, 11.9))
+    w, d, h = opening-2*fit, SIDE-COLLAR-fit, DRAWER_BODY_HEIGHT
+    # Front-down printing grows the internal rear ramp at 45 degrees, not as a bridged lid.
+    cavity_profile = [
+        (WALL, WALL), (d-WALL-(h-WALL), WALL),
+        (d-WALL+EPS, h+EPS), (WALL, h+EPS),
+    ]
+    cavity_face = Face(Wire.make_polygon(
+        [Vector(WALL, y, z) for y, z in cavity_profile], close=True))
+    cavity = extrude(cavity_face, amount=w-2*WALL, dir=(1, 0, 0))
+    tray = box(w, d, h)-cavity
+    front = box(L/2-2*fit, SIDE_INSET, HEIGHT-2*fit,
+                (-COLLAR, -SIDE_INSET, -WALL))
     return tray + front
 
 
@@ -168,8 +178,8 @@ def make_pod(fit):
     w = CHANNEL_X[1]-CHANNEL_X[0]-2*fit
     h = CHANNEL_Z[1]-CHANNEL_Z[0]-2*fit
     body = box(w, POD_LENGTH-CAP, h, (x, CAP, z))
-    body -= box(w-2*WALL, POD_LENGTH-CAP-WALL+EPS, h,
-                (x+WALL, CAP-EPS, z+WALL))
+    body -= box(w-2*WALL, POD_LENGTH-CAP-WALL+EPS, h-WALL+EPS,
+                (x+WALL, CAP-EPS, z-EPS))
     # A long hidden tail retains 29 mm of guidance at the 40.64 mm open pose.
     return headboard_solid(0, CAP) + body
 
@@ -253,13 +263,13 @@ def parts(fit):
     return {
         "side-module": Part(make_module(SIDE, True, fit), 4, 3, purpose="Open top up; outer drawer openings face out."),
         "center-module": Part(make_module(CENTER, False, fit), 2, 3, purpose="Open top up."),
-        "drawer": Part(make_drawer(fit), 8, 4, purpose="Tray opening up; front and finger notch are integral."),
+        "drawer": Part(make_drawer(fit), 8, 4, (90, 0, 0), "Full finished face down for printing; open tray up when assembled. Rear cavity ramp is 45 degrees."),
         "seam-key": Part(make_key(), 13, 3, purpose="Flat down; top-loaded seam key with a 2.4 mm extraction hole."),
         "foot": Part(make_foot(), 12, 3, purpose="Pad down, locating peg up."),
         "headboard-pin": Part(box(PIN_SIZE, PIN_SIZE, PIN_HEIGHT), 2, 3, purpose="One pin at each headboard locating hole."),
         "headboard": Part(make_headboard(fit), 1, 3, (0, -90, 0), "Back flat on the plate; channel roofs bridge 12.5 mm."),
-        "pod-left": Part(make_pod(fit), 1, 1, (90, 0, 0), "Left end cap flat down; tray grows vertically."),
-        "pod-right": Part(mirror(make_pod(fit), about=Plane.XZ), 1, 1, (-90, 0, 0), "Mirrored right end cap flat down; tray grows vertically."),
+        "pod-left": Part(make_pod(fit), 1, 1, (90, 0, 0), "Left end cap down for printing; assemble with flat shelf up and hollow underside down."),
+        "pod-right": Part(mirror(make_pod(fit), about=Plane.XZ), 1, 1, (-90, 0, 0), "Mirrored right end cap down for printing; assemble with flat shelf up and hollow underside down."),
         "base-insert": Part(make_base(), 2, 2, purpose="Lattice down; four mattress locators up. Static envelope only."),
         "mattress": Part(make_mattress(fit), 2, 2, (180, 0, 0), "Top face down; hollow ribbed underside up."),
         "fit-channels": Part(make_coupon(fit), 1, 3, purpose="Calibration only: one/two/three ticks = 0.20/0.25/0.35 mm per side."),
@@ -359,15 +369,36 @@ def validate(kit, fit):
         r._record(not collisions, f"{label}: no part interference; collisions={collisions}")
     drawer = kit["drawer"].shape
     opening = (L-2*COLLAR-DIVIDER)/2
+    printed_front = kit["drawer"].printable().intersect(
+        box(L/2-2*fit, HEIGHT-2*fit, SIDE_INSET))
+    r.volume(printed_front, (L/2-2*fit)*(HEIGHT-2*fit)*SIDE_INSET, tol_pct=0.01)
+    for index, x in enumerate((COLLAR, COLLAR+opening+DIVIDER)):
+        face_probe = box(L/2-2*fit, SIDE_INSET, HEIGHT-2*fit,
+                         (index*L/2+fit, -SIDE_INSET, fit))
+        closed_drawer = Pos(x+fit, 0, WALL+fit)*drawer
+        r.note(f"Drawer {index+1}: complete finished face with no finger notch or exposed face frame.")
+        r.volume(closed_drawer.intersect(face_probe), face_probe.volume, tol_pct=0.01)
     for x in (COLLAR, COLLAR+opening+DIVIDER):
         # Swept envelope includes every position, not only two end poses.
-        sweep = extrude(Face(Wire.make_polygon([
-            Vector(-1, 0, 0), Vector(opening-2*fit+1, 0, 0),
-            Vector(opening-2*fit+1, 0, 15.5), Vector(-1, 0, 15.5),
-        ], close=True)), amount=DRAWER_TRAVEL, dir=(0, -1, 0))
-        r.no_interference(Pos(x+fit, 0, WALL+fit)*sweep, kit["side-module"].shape)
+        face_sweep = box(L/2-2*fit, SIDE_INSET+DRAWER_TRAVEL, HEIGHT-2*fit,
+                         (-COLLAR, -SIDE_INSET-DRAWER_TRAVEL, -WALL))
+        body_sweep = box(opening-2*fit, SIDE-COLLAR-fit+DRAWER_TRAVEL, DRAWER_BODY_HEIGHT,
+                         (0, -DRAWER_TRAVEL, 0))
+        for sweep in (face_sweep, body_sweep):
+            r.no_interference(Pos(x+fit, 0, WALL+fit)*sweep, kit["side-module"].shape)
         for travel in (0, DRAWER_TRAVEL/2, DRAWER_TRAVEL):
             r.no_interference(Pos(x+fit, -travel, WALL+fit)*drawer, kit["side-module"].shape)
+    pod_width = CHANNEL_X[1]-CHANNEL_X[0]-2*fit
+    flat_top = box(pod_width, POD_LENGTH-CAP, WALL,
+                   (CHANNEL_X[0]+fit, CAP, CHANNEL_Z[1]-fit-WALL))
+    underside = box(pod_width-2*WALL, POD_LENGTH-CAP-WALL-EPS, WALL/2,
+                    (CHANNEL_X[0]+fit+WALL, CAP+EPS, CHANNEL_Z[0]+fit+EPS))
+    for name in ("pod-left", "pod-right"):
+        top_probe = flat_top if name == "pod-left" else mirror(flat_top, about=Plane.XZ)
+        underside_probe = underside if name == "pod-left" else mirror(underside, about=Plane.XZ)
+        r.note(f"{name}: continuous flat top and open underside, not an open-top drawer.")
+        r.volume(kit[name].shape.intersect(top_probe), top_probe.volume, tol_pct=0.01)
+        r.no_interference(kit[name].shape, underside_probe)
     for travel in (0, POD_TRAVEL/4, POD_TRAVEL/2, 3*POD_TRAVEL/4, POD_TRAVEL):
         r.no_interference(Pos(0, -travel, 0)*kit["pod-left"].shape, kit["headboard"].shape)
         r.no_interference(Pos(0, WIDTH+travel, 0)*kit["pod-right"].shape, kit["headboard"].shape)

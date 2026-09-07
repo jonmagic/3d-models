@@ -63,7 +63,7 @@ selected.each do |name|
     mesh.match?(/^manifold = yes$/) && mesh.match?(/^number_of_parts =\s+1$/)
   File.write(File.join(BUILD, "slice-reports", "#{name}-mesh.txt"), mesh)
 
-  brim = %w[foot headboard-pin seam-key pod-left pod-right base-insert mattress headboard].include?(name) ? 3 : 0
+  brim = %w[drawer foot headboard-pin seam-key pod-left pod-right base-insert mattress headboard].include?(name) ? 3 : 0
   x, y, z = part.fetch("size_mm")
   # Reserve the larger of the skirt or brim, plus an extrusion-width margin.
   margin = [brim, 3].max + 0.6
