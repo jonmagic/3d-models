@@ -95,6 +95,8 @@ def main():
         "",
         "Each file contains one copy, already oriented. Repeat the job to reach the total quantity. Do not print this entire list before the fit samples pass.",
         "",
+        "The sleep system uses one each of `base-insert`, `mattress`, `base-raised`, and `mattress-raised`. The head-up pair has a fixed 15.24 mm rise over 60.96 mm (14.036 degrees), matching 6 inches over a 24-inch run at full scale. Keep each mattress with its matching support.",
+        "",
         "| File | Total copies | Slot / PLA color | Size X x Y x Z, mm | Brim | Time per copy | Filament per copy |",
         "|---|---:|---|---|---:|---|---:|",
     ]

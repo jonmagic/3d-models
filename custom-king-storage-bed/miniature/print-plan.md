@@ -12,6 +12,8 @@ Print the three calibration pieces, one production seam key, and one production 
 
 Each file contains one copy, already oriented. Repeat the job to reach the total quantity. Do not print this entire list before the fit samples pass.
 
+The sleep system uses one each of `base-insert`, `mattress`, `base-raised`, and `mattress-raised`. The head-up pair has a fixed 15.24 mm rise over 60.96 mm (14.036 degrees), matching 6 inches over a 24-inch run at full scale. Keep each mattress with its matching support.
+
 | File | Total copies | Slot / PLA color | Size X x Y x Z, mm | Brim | Time per copy | Filament per copy |
 |---|---:|---|---|---:|---|---:|
 | [`side-module.bgcode`](build/gcode/side-module.bgcode) | 4 | 3 / silver | 121.6 x 69.2 x 20.3 | 0 mm | 1h 36m 2s | 48.78 g |
@@ -23,13 +25,15 @@ Each file contains one copy, already oriented. Repeat the job to reach the total
 | [`headboard.bgcode`](build/gcode/headboard.bgcode) | 1 | 3 / silver | 58.4 x 188.7 x 24.9 | 3 mm | 3h 27m 0s | 98.33 g |
 | [`pod-left.bgcode`](build/gcode/pod-left.bgcode) | 1 | 1 / red | 24.9 x 58.4 x 72.0 | 3 mm | 1h 13m 10s | 9.44 g |
 | [`pod-right.bgcode`](build/gcode/pod-right.bgcode) | 1 | 1 / red | 24.9 x 58.4 x 72.0 | 3 mm | 1h 13m 14s | 9.44 g |
-| [`base-insert.bgcode`](build/gcode/base-insert.bgcode) | 2 | 2 / blue | 213.4 x 91.1 x 9.5 | 3 mm | 39m 45s | 19.92 g |
-| [`mattress.bgcode`](build/gcode/mattress.bgcode) | 2 | 2 / blue | 213.4 x 91.1 x 27.9 | 3 mm | 3h 12m 39s | 112.70 g |
+| [`base-insert.bgcode`](build/gcode/base-insert.bgcode) | 1 | 2 / blue | 213.4 x 91.1 x 9.5 | 3 mm | 39m 44s | 19.92 g |
+| [`mattress.bgcode`](build/gcode/mattress.bgcode) | 1 | 2 / blue | 213.4 x 91.1 x 27.9 | 3 mm | 3h 12m 39s | 112.70 g |
+| [`base-raised.bgcode`](build/gcode/base-raised.bgcode) | 1 | 2 / blue | 213.4 x 91.1 x 23.5 | 3 mm | 1h 2m 11s | 30.89 g |
+| [`mattress-raised.bgcode`](build/gcode/mattress-raised.bgcode) | 1 | 2 / blue | 213.4 x 43.2 x 91.1 | 3 mm | 7h 20m 14s | 194.82 g |
 | [`fit-channels.bgcode`](build/gcode/fit-channels.bgcode) | 1 (sample) | 3 / silver | 82.0 x 32.0 x 7.0 | 0 mm | 19m 11s | 8.42 g |
 | [`fit-slider.bgcode`](build/gcode/fit-slider.bgcode) | 1 (sample) | 4 / green | 15.0 x 22.0 x 5.0 | 0 mm | 6m 15s | 1.61 g |
 | [`fit-connectors.bgcode`](build/gcode/fit-connectors.bgcode) | 1 (sample) | 3 / silver | 34.0 x 24.0 x 8.0 | 0 mm | 13m 40s | 5.02 g |
 
-**Production totals:** 36h 01m 04s and 811.18 g. **Three calibration pieces:** 0h 39m 06s and 15.05 g, in addition to production totals. The tested key and pin are already included in production totals.
+**Production totals:** 40h 31m 04s and 904.27 g. **Three calibration pieces:** 0h 39m 06s and 15.05 g, in addition to production totals. The tested key and pin are already included in production totals.
 
 These are PrusaSlicer estimates summed across separate single-copy jobs, not elapsed project time. They exclude loading, unloading, plate cleaning, cooldown, assembly, retries, and failed prints. Batching or changing profiles will change the numbers.
 

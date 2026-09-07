@@ -59,6 +59,9 @@ PAD = full.STRUCTURAL_SUPPORT_SIZE * MM
 LOCATOR_HEIGHT = 1.2
 RECESS_DEPTH = 1.8
 MATTRESS_SKIN = 2.4
+HEAD_RUN = 24.0*MM
+HEAD_RISE = 6.0*MM
+HEAD_ANGLE = math.degrees(math.atan2(HEAD_RISE, HEAD_RUN))
 EPS = 0.01
 
 
@@ -226,6 +229,46 @@ def make_mattress(fit):
     return result
 
 
+def sleep_profile(points):
+    face = Face(Wire.make_polygon([Vector(x, 0, z) for x, z in points], close=True))
+    return extrude(face, amount=HALF_WIDTH, dir=(0, 1, 0))
+
+
+def raised_locators():
+    return [(x, y) for x in (HEAD_RUN+10, MATTRESS_LENGTH-26)
+            for y in (2.5, HALF_WIDTH-4.3)]
+
+
+def make_raised_base():
+    envelope = sleep_profile([
+        (0, 0), (MATTRESS_LENGTH, 0), (MATTRESS_LENGTH, BASE_HEIGHT),
+        (HEAD_RUN, BASE_HEIGHT), (0, BASE_HEIGHT+HEAD_RISE),
+    ])
+    result = envelope-box(MATTRESS_LENGTH-2*WALL, HALF_WIDTH-2*WALL,
+                          BASE_HEIGHT+HEAD_RISE+2*EPS, (WALL, WALL, -EPS))
+    for x in (HEAD_RUN/2, MATTRESS_LENGTH/3, 2*MATTRESS_LENGTH/3):
+        result += envelope.intersect(box(2*WALL, HALF_WIDTH, BASE_HEIGHT+HEAD_RISE,
+                                         (x-WALL, 0, 0)))
+    for x, y in raised_locators():
+        pad_y = 0 if y == 2.5 else HALF_WIDTH-4.3
+        result += box(20, 4.3, BASE_HEIGHT, (x, pad_y, 0))
+        result += box(20, WALL, LOCATOR_HEIGHT, (x, y, BASE_HEIGHT))
+    return result
+
+
+def make_raised_mattress(fit):
+    # A fixed bent envelope, not a working hinge or a separate pillow.
+    result = sleep_profile([
+        (0, HEAD_RISE), (HEAD_RUN, 0), (MATTRESS_LENGTH, 0),
+        (MATTRESS_LENGTH, MATTRESS_HEIGHT), (HEAD_RUN, MATTRESS_HEIGHT),
+        (0, MATTRESS_HEIGHT+HEAD_RISE),
+    ])
+    for x, y in raised_locators():
+        result -= box(20+2*fit, WALL+2*fit, RECESS_DEPTH+EPS,
+                      (x-fit, y-fit, -EPS))
+    return result
+
+
 def make_coupon(fit):
     base = box(82, 32, WALL)
     for i, gap in enumerate((0.20, 0.25, 0.35)):
@@ -270,8 +313,10 @@ def parts(fit):
         "headboard": Part(make_headboard(fit), 1, 3, (0, -90, 0), "Back flat on the plate; channel roofs bridge 12.5 mm."),
         "pod-left": Part(make_pod(fit), 1, 1, (90, 0, 0), "Left end cap down for printing; assemble with flat shelf up and hollow underside down."),
         "pod-right": Part(mirror(make_pod(fit), about=Plane.XZ), 1, 1, (-90, 0, 0), "Mirrored right end cap down for printing; assemble with flat shelf up and hollow underside down."),
-        "base-insert": Part(make_base(), 2, 2, purpose="Lattice down; four mattress locators up. Static envelope only."),
-        "mattress": Part(make_mattress(fit), 2, 2, (180, 0, 0), "Top face down; hollow ribbed underside up."),
+        "base-insert": Part(make_base(), 1, 2, purpose="Flat half only: lattice down; four mattress locators up."),
+        "mattress": Part(make_mattress(fit), 1, 2, (180, 0, 0), "Flat half only: top face down; hollow ribbed underside up."),
+        "base-raised": Part(make_raised_base(), 1, 2, purpose="Raised half only: lattice down. Matching 14-degree support, four locators in the flat section."),
+        "mattress-raised": Part(make_raised_mattress(fit), 1, 2, (90, 0, 0), "Raised half only: long side down. Head rises 15.24 mm over 60.96 mm; fixed pose."),
         "fit-channels": Part(make_coupon(fit), 1, 3, purpose="Calibration only: one/two/three ticks = 0.20/0.25/0.35 mm per side."),
         "fit-slider": Part(box(15, 22, 5), 1, 4, purpose="Calibration only; flat down, slide by the protruding end."),
         "fit-connectors": Part(make_connector_coupon(fit), 1, 3, purpose="Calibration only; test one production key and one pin."),
@@ -324,9 +369,11 @@ def assembly(kit, fit, opened=False, exploded=False):
     add("pod-right", kit["pod-right"].shape,
         Pos(0, WIDTH+travel, TOP+hb_lift), "pods")
     for i, y in enumerate((full.MATTRESS_SIDE_MARGIN*MM, full.MATTRESS_SIDE_MARGIN*MM+HALF_WIDTH+MATTRESS_GAP)):
-        add(f"base-{i}", kit["base-insert"].shape,
+        base_name = "base-raised" if i == 0 else "base-insert"
+        mattress_name = "mattress-raised" if i == 0 else "mattress"
+        add(f"base-{i}", kit[base_name].shape,
             Pos(SLEEP_X, y, TOP+(65 if exploded else 0)), "bases")
-        add(f"mattress-{i}", kit["mattress"].shape,
+        add(f"mattress-{i}", kit[mattress_name].shape,
             Pos(SLEEP_X, y, TOP+BASE_HEIGHT+(110 if exploded else 0)), "mattresses")
     return objects
 
@@ -347,14 +394,25 @@ def validate(kit, fit):
         r._record(size.X <= 240 and size.Y <= 200 and size.Z <= 210,
                   f"print orientation fits 240 x 200 x 210 mm margin envelope: {size}")
         if name not in ("fit-channels",):
-            minimum = {"foot": 1.4, "base-insert": LOCATOR_HEIGHT}.get(name, WALL)
+            minimum = {"foot": 1.4, "base-insert": LOCATOR_HEIGHT, "base-raised": LOCATOR_HEIGHT}.get(name, WALL)
             r.min_wall(part.shape, minimum-0.02, samples=3)
-            if name in ("foot", "base-insert"):
+            if name in ("foot", "base-insert", "base-raised"):
                 r.note("The lower ray threshold is the intentional short locator height, not a thin handled wall.")
         r.done()
     r = Report("assembly and interfaces")
     closed = assembly(kit, fit)
     opened = assembly(kit, fit, opened=True)
+    by_name = {name: shape for name, shape, _ in closed}
+    r.note("One head section rises 6 inches over a 24-inch run; the other mattress remains flat.")
+    r.dimension(by_name["mattress-0"], "z", MATTRESS_HEIGHT+HEAD_RISE, tol=0.01)
+    r.dimension(by_name["mattress-1"], "z", MATTRESS_HEIGHT, tol=0.01)
+    r.dimension(by_name["base-0"], "z", BASE_HEIGHT+HEAD_RISE, tol=0.01)
+    normals = [face.normal_at() for face in kit["mattress-raised"].shape.faces()]
+    r._record(any(n.Z > 0.9 and abs(n.Y) < 1e-6
+                  and abs(n.X/n.Z-HEAD_RISE/HEAD_RUN) < 1e-6 for n in normals),
+              f"Raised mattress has an upward-facing {HEAD_ANGLE:.4f}-degree head surface.")
+    r.clearance(by_name["base-0"], by_name["mattress-0"], minimum=0, maximum=0.01)
+    r.dimension(kit["mattress-raised"].printable(), "z", HALF_WIDTH, tol=0.01)
     r._record(len(closed) == 48, f"48 physical pieces, got {len(closed)}")
     combined = Compound([shape for _, shape, _ in closed])
     r.dimension(combined, "x", L*2, tol=0.05)
@@ -414,7 +472,7 @@ def validate(kit, fit):
     skin_volume = (MATTRESS_LENGTH*HALF_WIDTH-(4-math.pi)*2.5**2)*MATTRESS_SKIN
     r.volume(bottom_skin, skin_volume, tol_pct=0.01)
     r.note("The mattress skin is printed directly on the plate before its vertical ribs; it is not a bridged roof.")
-    r.note("Base inserts are static envelopes; mattress split and non-telescoping pod tails are miniature adaptations.")
+    r.note("One sleep half is flat and one has a fixed raised-head pose, not a working hinge or a manufacturer articulation model.")
     r.note("No captive drawer/pod stops: open poses are display limits, not mechanical stops.")
     r.note("Physical fit, adhesion, bridge finish, and sliding friction require the included coupons and first articles.")
     r.done()
@@ -424,6 +482,8 @@ def export(kit, fit, output):
     output.mkdir(parents=True, exist_ok=True)
     manifest = {
         "scale": SCALE, "fit_per_side_mm": fit, "parts": {}, "assembly_piece_count": 48,
+        "raised_head": {"run_mm": HEAD_RUN, "rise_mm": HEAD_RISE, "angle_degrees": HEAD_ANGLE,
+                        "pose": "fixed", "side_in_preview": "left"},
         "source_sha256": {name: hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
                           for name in ("model.py", "../design.py")},
     }

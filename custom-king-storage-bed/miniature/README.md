@@ -6,7 +6,7 @@ A 1:10, hand-assembled interpretation of the full-size storage bed. The construc
 
 ## Start here
 
-The finished miniature is **243.2 mm long, 193.0 mm wide, and 91.4 mm high** with the nightstands closed. There are 48 production pieces, made from 11 distinct part files, plus three calibration pieces. Print one copy of a file per job and repeat it according to the quantity table. Do not slice an assembly STEP or the colored scene meshes.
+The finished miniature is **243.2 mm long, 193.0 mm wide, and 91.4 mm high** with the nightstands closed. There are 48 production pieces, made from 13 distinct part files, plus three calibration pieces. One mattress is flat and the other has a fixed raised-head pose. Print one copy of a file per job and repeat it according to the quantity table. Do not slice an assembly STEP or the colored scene meshes.
 
 The ready-oriented meshes and exact solids are in `build/parts/`. Corresponding single-part printer files are in `build/gcode/`. `build/manifest.json` is the quantity/orientation list; `build/print-summary.json` and `build/slice-reports/` contain the actual slicer settings, material use, printing time, source hashes, and g-code hashes for this build. Rebuild and re-slice together if any source or fit setting changes.
 
@@ -27,8 +27,10 @@ The [generated print plan](print-plan.md) lists measured per-copy and complete-k
 | `headboard` | 1 | 3 / silver PLA | Broad back down, not upright |
 | `pod-left` | 1 | 1 / red PLA | End cap down, shelf vertical |
 | `pod-right` | 1 | 1 / red PLA | Mirrored end cap down, shelf vertical |
-| `base-insert` | 2 | 2 / blue PLA | Lattice down, locators up |
-| `mattress` | 2 | 2 / blue PLA | Top down, underside recess up |
+| `base-insert` | 1 | 2 / blue PLA | Flat support: lattice down, locators up |
+| `mattress` | 1 | 2 / blue PLA | Flat mattress: top down, hollow underside up |
+| `base-raised` | 1 | 2 / blue PLA | Head-up support: lattice down |
+| `mattress-raised` | 1 | 2 / blue PLA | Head-up mattress: long side down |
 | `fit-channels` | 1, calibration only | 3 / silver PLA | Flat base down |
 | `fit-slider` | 1, calibration only | 4 / green PLA | Flat down |
 | `fit-connectors` | 1, calibration only | 3 / silver PLA | Pockets upward |
@@ -37,13 +39,17 @@ The two pods are genuinely handed parts: print one of each, not two copies of th
 
 ## Design contract
 
-The frame consists of four identical outside two-drawer modules and two identical center modules, arranged three across and two long. Thirteen top-loaded butterfly keys join the six modules; twelve removable feet preserve the scaled floor clearance. Each of the eight hollow drawers carries its complete finished face: a full-height half-module panel, with no finger notch and no exposed fixed frame surrounding it. Narrow seams separate the panels, and the entire panel moves with its drawer. One removable headboard locates on two square pins, with two flat-topped nightstand shelves whose whole end caps slide laterally. Each shelf is like an inverted drawer: a continuous 1.8 mm top with a hollow underside and downward side walls that ride on the channel floor. Two static adjustable-base envelopes support two separate rigid mattress pieces, hollow underneath with a 2.4 mm top skin and internal ribs to reduce material.
+The frame consists of four identical outside two-drawer modules and two identical center modules, arranged three across and two long. Thirteen top-loaded butterfly keys join the six modules; twelve removable feet preserve the scaled floor clearance. Each of the eight hollow drawers carries its complete finished face: a full-height half-module panel, with no finger notch and no exposed fixed frame surrounding it. Narrow seams separate the panels, and the entire panel moves with its drawer. One removable headboard locates on two square pins, with two flat-topped nightstand shelves whose whole end caps slide laterally. Each shelf is like an inverted drawer: a continuous 1.8 mm top with a hollow underside and downward side walls that ride on the channel floor. Separate flat and raised-head supports carry their matching rigid mattress pieces.
 
 The nominal scale is 1:10. Walls, joints, and clearances are designed in millimeters rather than blindly scaled. Handled walls start at 1.8 mm; the wider module end/back walls support the seam pockets. The separate feet and keys are deliberately simplified miniature hardware, not a reproduction of the full-size support count or load path. The foot fascia is omitted, shortening the model by 0.635 mm.
 
 The base drawer panels leave a 0.5 mm seam between adjacent faces at the default fit and conceal the supporting carcass behind them. All eight drawers remain interchangeable. Their smaller boxes are centered behind the broad faces; a lightened center divider carries their inner guide walls. Grip a panel's lower edge from below rather than reaching through a hole in its face. Inside each drawer, a 45-degree rear ramp lets the box print from its face without a long unsupported closing wall.
 
-The headboard is trimmed ahead of the sleep system instead of reproducing the provisional four-inch full-size overlap. Each nightstand has a longer hidden guide tail, allowing 40.64 mm of lateral movement with at least 28 mm still engaged. Drawers pull out 35 mm for display. Neither has a captive stop; both can be removed completely and should be supported by hand when open. The two rigid mattresses are a miniature adaptation of the full-size model's single Flex-Head mattress. The base inserts do not articulate.
+The headboard is trimmed ahead of the sleep system instead of reproducing the provisional four-inch full-size overlap. Each nightstand has a longer hidden guide tail, allowing 40.64 mm of lateral movement with at least 28 mm still engaged. Drawers pull out 35 mm for display. Neither has a captive stop; both can be removed completely and should be supported by hand when open. The two rigid mattresses are a miniature adaptation of the full-size model's single Flex-Head mattress.
+
+The raised head section emulates a 6-inch rise over the 24-inch horizontal run of a 24 x 24-inch wedge pillow: **15.24 mm rise over 60.96 mm at 1:10, or 14.036 degrees**. That slope spans the full mattress half, not just a pillow-width patch; no separate pillow is modeled. The remaining mattress length stays flat. A matching support follows the underside so the raised section does not float. This is a fixed display pose, not a working hinge or a claim about the delivered adjustable base's articulation geometry. The raised pair appears on the left in the preview; the complete pair can be placed on either side.
+
+The flat mattress has a hollow ribbed underside and a 2.4 mm skin. The raised mattress uses a continuous side profile with slicer infill instead of open internal cavities, so it can print on its long side without a suspended roof. Its matching support is an open lattice whose side rails and crossmembers follow the raised underside; it prints bottom-down. Four small locating pockets in the raised mattress's flat underside match the raised support's tabs.
 
 ## Interfaces and print orientation
 
@@ -54,13 +60,13 @@ The headboard is trimmed ahead of the sleep system instead of reproducing the pr
 | Drawers | Straight sliding fit; each full-height finished panel conceals the fixed carcass and moves with its box. | Finished face down; tray grows vertically, with a 45-degree internal rear ramp. |
 | Headboard | Two square pins locate the housing on the head modules; gravity seats it. | Housing back down; two lateral channel roofs bridge 12.5 mm. |
 | Nightstands | Flat shelves slide on their underside walls inside straight channels; hidden tails retain guidance when open. | End cap down, shelf and underside walls growing vertically. |
-| Mattress/base | Four base locators enter the hollow mattress underside inside its perimeter rim. | Bases lattice-down; mattresses top-down, hollow side up. |
+| Mattress/base | Four locators register each matching pair: the flat mattress uses its hollow rim, and the raised mattress has pockets in its flat section. | Both supports lattice-down; flat mattress top-down; raised mattress long-side-down. |
 
 Print one part per job initially. All production parts are supplied in their intended print orientation. Assemblies under `build/closed`, `build/open`, and `build/exploded` are for viewing, not slicing.
 
 ## Print settings
 
-The supplied jobs target a Prusa MK4 with a 0.4 mm nozzle and MMU3: 0.15 mm layers, 0.20 mm first layer, four perimeters, 15% gyroid infill, and six top/bottom solid layers. Supports and the wipe tower are explicitly disabled; a 3 mm skirt distance and 0.15 mm elephant-foot compensation are specified. The slicer binds perimeter, solid infill, and infill to the listed single lane. The hollow mattresses print top-down: the complete skin prints on the plate first, then the walls and ribs rise from it, so their large internal cavities do not require bridging.
+The supplied jobs target a Prusa MK4 with a 0.4 mm nozzle and MMU3: 0.15 mm layers, 0.20 mm first layer, four perimeters, 15% gyroid infill, and six top/bottom solid layers. Supports and the wipe tower are explicitly disabled; a 3 mm skirt distance and 0.15 mm elephant-foot compensation are specified. The slicer binds perimeter, solid infill, and infill to the listed single lane. The hollow flat mattress prints top-down: the complete skin prints on the plate first, then the walls and ribs rise from it. The raised mattress prints on its long side, with regular infill supporting subsequent layers. Both lattice supports print bottom-down, including the raised support's sloped rails.
 
 The drawers, headboard, both pods, both mattress jobs, base inserts, feet, keys, and pins use a 3 mm outer brim. Remove it without shaving mating surfaces. Other jobs have no brim. Clean the smooth PEI sheet and inspect the first layer. The headboard's printed channel roofs span 12.5 mm; the small horizontal pin pockets span 4.5 mm at the default fit. Check those openings for sagging before inserting a pod or pin. Each nightstand prints standing on its broad end cap, so its flat shelf surface grows vertically instead of bridging the underside cavity. Base drawers likewise print on their complete faces, with an internal ramp supporting the rear closure.
 
@@ -85,8 +91,8 @@ If the default binds, rebuild with `--fit 0.35`, regenerate g-code, and repeat t
 5. **Insert the eight drawers.** Keep the open box up and its complete finished panel facing out. Push gently until the panel seats against the outside edge. The closed panels cover the fixed frame and leave only narrow seams. Pull from the bottom edge of the panel; there is no finger cutout. The 35 mm open display position leaves useful support under the box.
 6. **Fit the headboard.** The headboard is at the end nearest the mattress head, with its broad flat back facing away from the bed and its sloping front facing the foot. Put one square pin in each of the two corresponding module-top holes, then lower the housing onto them. The housing rests on the chassis, not on the pins.
 7. **Insert the handed nightstands.** Feed each long guide tail into its side channel with the continuous flat shelf facing upward and the hollow underside facing down. The underside walls bear on the channel floor; the channel sides and ceiling guide the retained tail. The red end cap continues the headboard's slope when closed. Pull outward no more than about 41 mm for display; support it by hand because there is no captive end stop.
-8. **Place the two blue base inserts.** Their long edges run head-to-foot. Place their head edges 25.4 mm from the back end of the chassis, just ahead of the headboard. Center them with 5.08 mm side margins and a 0.6 mm gap between halves; the foot margin is about 4.45 mm. They rest on the module tops without fasteners.
-9. **Seat the two mattresses.** Turn them top-up, recess-down, and lower each over the four small locator tabs on its own base. The two pieces remain independently removable.
+8. **Place the two different blue supports.** Use one `base-insert` and one `base-raised`, with their long edges head-to-foot and the raised end toward the headboard. Place their head edges 25.4 mm from the back end of the chassis, just ahead of the headboard. Center them with 5.08 mm side margins and a 0.6 mm gap between halves; the foot margin is about 4.45 mm. They rest on the module tops without fasteners. Keep each support with its matching mattress when swapping sides.
+9. **Seat the two different mattresses.** Put `mattress` on `base-insert`, hollow side down. Put `mattress-raised` on `base-raised`, elevated end toward the headboard, with the four underside pockets over the matching tabs in the flat section. Both mattresses remain independently removable. Print one of each sleep-system file, not two copies of the former flat pair.
 
 ```text
                     HEADBOARD
