@@ -12,6 +12,7 @@ gitignored — run the project's `build.sh` to regenerate them.
 | Project | What it is |
 |---|---|
 | [`custom-king-storage-bed/`](custom-king-storage-bed) | A build123d model of a king storage bed with an adjustable-base envelope, eight drawer faces, and sliding headboard pod geometry. |
+| [`custom-king-storage-bed/miniature/`](custom-king-storage-bed/miniature) | A 1:10 printable assembly kit with functional drawers, sliding nightstands, fit coupons, two mattress pieces, and an illustrated print/assembly guide. |
 | [`cousin-camp-2026/`](cousin-camp-2026) | A parametric crown/diadem/tiara engine sized to a measured head circumference, and a five-finger piano keyboard designed as a two-colour press-fit assembly. |
 | `tornado.scad` | A spiral with a turn-based thickness profile and a reinforced bridge joint. |
 

@@ -30,6 +30,10 @@ The finished dimensions include 3/4-inch side finish faces and a 1/4-inch foot f
 
 Generated CAD and render files live under `build/` and are ignored. The guide diagrams under `guide-assets/steps/` and the standalone HTML under `docs/` are committed.
 
+## Printable miniature
+
+[`miniature/`](miniature/) contains an independent 1:10 desk model: six keyed base modules, eight sliding drawers, a removable headboard with handed pull-out nightstands, and two static base/mattress pairs. Its [illustrated guide](miniature/README.md) covers calibration, print orientations, quantities, and assembly. The miniature deliberately adapts walls and interfaces for the MK4; it does not change or validate the full-size construction design.
+
 ## Structural concept
 
 The lower chassis is six transportable plywood carcasses arranged three across and two long. Four side modules hold two drawers each. Two center modules carry the split-base seam and preserve a 12-inch service route at the wall.
