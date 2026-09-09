@@ -44,6 +44,13 @@ state = JSON.parse(File.read(STATE))
 abort("This slicing contract requires MK4 with a 0.4 mm nozzle and MMU3.") unless
   state.dig("printer", "model") == "Prusa MK4" &&
   state.dig("printer", "nozzle_mm") == 0.4 && state.dig("printer", "mmu") == "MMU3"
+filament_types = (1..state.dig("printer", "mmu_slots")).map do |slot|
+  spool = state.fetch("loaded").find { |loaded| loaded["slot"] == slot }
+  abort("MMU slot #{slot} has no recorded filament; update filament state before slicing.") unless spool
+  material = spool.fetch("material").upcase
+  abort("Unsupported material in MMU slot #{slot}: #{material}") unless %w[PLA PETG].include?(material)
+  material
+end
 
 selected = ARGV.empty? ? manifest.fetch("parts").keys : ARGV
 unknown = selected - manifest.fetch("parts").keys
@@ -77,6 +84,7 @@ selected.each do |name|
     "--post-process", "", "--perimeters", "4", "--fill-density", "15%",
     "--fill-pattern", "gyroid", "--top-solid-layers", "6", "--bottom-solid-layers", "6",
     "--first-layer-height", "0.2", "--elefant-foot-compensation", "0.15",
+    "--filament-type", filament_types.join(";"),
     "--perimeter-extruder", slot.to_s, "--infill-extruder", slot.to_s,
     "--solid-infill-extruder", slot.to_s, "--support-material-extruder", "0",
     "--support-material-interface-extruder", "0", "--brim-type", "outer_only",
@@ -94,6 +102,8 @@ selected.each do |name|
   grams = meta.fetch("filament used [g]").split(",").map { |v| Float(v) }
   active = grams.each_index.select { |index| grams[index].positive? }
   abort("Wrong or multiple active MMU slots for #{name}: #{active}") unless active == [slot-1]
+  abort("Unexpected MMU material map for #{name}: #{meta['filament_type']}") unless
+    meta.fetch("filament_type").split(";") == filament_types
   abort("Unexpected material for #{name}") unless meta.fetch("filament_type").split(";").fetch(slot-1) == "PLA"
   time = meta.fetch("estimated printing time (normal mode)")
   record = {
