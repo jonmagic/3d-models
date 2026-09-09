@@ -51,6 +51,13 @@ filament_types = (1..state.dig("printer", "mmu_slots")).map do |slot|
   abort("Unsupported material in MMU slot #{slot}: #{material}") unless %w[PLA PETG].include?(material)
   material
 end
+material_profiles = filament_types.flat_map do |material|
+  profile = {
+    "PLA" => "Prusament PLA @PGIS",
+    "PETG" => "Prusament PETG @PGIS"
+  }.fetch(material)
+  ["--material-profile", profile]
+end
 
 selected = ARGV.empty? ? manifest.fetch("parts").keys : ARGV
 unknown = selected - manifest.fetch("parts").keys
@@ -79,12 +86,11 @@ selected.each do |name|
   command = [
     APP, "--datadir", DATADIR,
     "--printer-profile", "Original Prusa MK4 MMU3 0.4 nozzle",
-    "--print-profile", PROFILE, "--material-profile", "Prusament PLA @PGIS",
+    "--print-profile", PROFILE, *material_profiles,
     "--binary-gcode", "--no-support-material", "--no-wipe-tower",
     "--post-process", "", "--perimeters", "4", "--fill-density", "15%",
     "--fill-pattern", "gyroid", "--top-solid-layers", "6", "--bottom-solid-layers", "6",
     "--first-layer-height", "0.2", "--elefant-foot-compensation", "0.15",
-    "--filament-type", filament_types.join(";"),
     "--perimeter-extruder", slot.to_s, "--infill-extruder", slot.to_s,
     "--solid-infill-extruder", slot.to_s, "--support-material-extruder", "0",
     "--support-material-interface-extruder", "0", "--brim-type", "outer_only",
